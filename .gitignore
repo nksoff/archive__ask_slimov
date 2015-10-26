@@ -1,0 +1,28 @@
+# Project
+*.pyc
+
+# Linux / Unix
+!.gitkeep
+!.gitignore
+*~
+
+# Mac OS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+# Thumbnails
+._*
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Vim
+.*.s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
