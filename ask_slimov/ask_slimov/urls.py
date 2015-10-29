@@ -20,5 +20,6 @@ from ask_slimov import views
 
 urlpatterns = [
     url(r'^$', views.info),
+    url(r'^proxy-cache/?$', views.info),
     url(r'^admin/', include(admin.site.urls)),
 ]
