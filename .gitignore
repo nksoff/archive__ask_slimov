@@ -1,4 +1,5 @@
 # Project
+ask_slimov/uploads/*
 *.pyc
 
 # Linux / Unix
