@@ -76,7 +76,6 @@ def questions_tag(request, tag):
             {
                 'questions': pagination,
                 'title': 'Тег ' + str(tag),
-                'key': 'hot',
             })
 
 # single question
