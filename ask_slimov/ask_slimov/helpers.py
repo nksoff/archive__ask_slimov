@@ -9,6 +9,6 @@ def paginate(objects, request):
     except PageNotAnInteger:
         result = p.page(1)
     except EmptyPage:
-        result = p.page(p.num_pages)
+        result = p.page(1)
 
     return result
