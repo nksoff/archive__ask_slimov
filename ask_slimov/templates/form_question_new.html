@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{%block title %}Задать вопрос{% endblock %}
+{%block page_title %}Задать вопрос{% endblock %}
+
+{%block content %}
+    <div class="ask-ask-form-error">
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            Укажите заголовок вопроса
+        </div>
+    </div>
+    <div class="ask-ask-form">
+        <form class="form-horizontal">
+            <div class="form-group has-error">
+                <label for="title" class="col-sm-3 control-label">Заголовок</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="title" placeholder="Заголовок вопроса">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="text" class="col-sm-3 control-label">Текст</label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" id="text" rows="10"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="tag" class="col-sm-3 control-label">Теги</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" id="tag1" placeholder="тег 1">
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" id="tag2" placeholder="тег 2">
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" id="tag3" placeholder="тег 3">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <button type="submit" class="btn btn-primary">Задать вопрос</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

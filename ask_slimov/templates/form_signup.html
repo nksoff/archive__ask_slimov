@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{%block title %}Регистрация{% endblock %}
+{%block page_title %}Регистрация{% endblock %}
+
+{%block content %}
+    <div class="ask-signup-form-error">
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            Введенные пароли не совпадают!
+        </div>
+    </div>
+    <div class="ask-signup-form">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="login" class="col-sm-3 control-label">Логин</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="login" placeholder="me">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="col-sm-3 control-label">E-mail</label>
+                <div class="col-sm-6">
+                    <input type="email" class="form-control" id="email" placeholder="me@yandex.ru">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="nickname" class="col-sm-3 control-label">Никнейм</label>
+                <div class="col-sm-6">
+                    <input type="email" class="form-control" id="nickname" placeholder="Иванов Иван">
+                </div>
+            </div>
+            <div class="form-group has-error">
+                <label for="password" class="col-sm-3 control-label">Пароль</label>
+                <div class="col-sm-6">
+                    <input type="password" class="form-control" id="password" placeholder="***********">
+                </div>
+            </div>
+            <div class="form-group has-error">
+                <label for="password-repeat" class="col-sm-3 control-label">Повторите пароль</label>
+                <div class="col-sm-6">
+                    <input type="password" class="form-control" id="password-repeat" placeholder="***********">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="avatar" class="col-sm-3 control-label">Аватар</label>
+                <div class="col-sm-6">
+                    <input type="file" id="avatar" class="ask-signup-avatar-input">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+

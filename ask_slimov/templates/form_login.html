@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{%block title %}Войти{% endblock %}
+{%block page_title %}Войти{% endblock %}
+
+{%block content %}
+    <div class="ask-login-form-error">
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            Указан неверный логин или пароль.
+        </div>
+    </div>
+    <div class="ask-login-form">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="login" class="col-sm-2 control-label">Логин</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="login" placeholder="me">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label">Пароль</label>
+                <div class="col-sm-5">
+                    <input type="password" class="form-control" id="password" placeholder="***********">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-2">
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </div>
+                <div class="col-sm-3">
+                    <a href="{% url 'signup' %}" class="btn btn-default" style="float: right">зарегистрироваться</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

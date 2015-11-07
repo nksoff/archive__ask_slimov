@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{%block title %}{{ title }}{% endblock %}
+{%block page_title %}
+{{ title }}
+{% if key == 'new' %}<a href="{% url 'hot' %}" class="small">Лучшие вопросы</a>{% endif %}
+{% if key == 'hot' %}<a href="{% url 'index' %}" class="small">Новые вопросы</a>{% endif %}
+{% endblock %}
+
+{%block content %}
+<div class="ask-questions">
+    {% for question in questions %}
+    <div class="ask-question ask-question-{% if forloop.counter|divisibleby:2 %}white{% else %}gray{% endif %}">
+        <div class="ask-question-info">
+            <div class="ask-user-avatar-container">
+                <img src="http://dummyimage.com/100x100/009/fff" class="user-avatar" />
+            </div>
+            <div class="ask-question-data">
+                <div class="ask-question-title"><a href="{% url 'question' question.id %}">{{ question.title }}</a></div>
+                <p class="ask-question-text">{{ question.text }}</p>
+            </div>
+        </div>
+        <div class="ask-question-options">
+            <div class="ask-question-vote">
+                <a class="btn btn-xs btn-danger ask-question-vote-down"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                <span class="ask-question-vote-count">{{ question.votes }}</span>
+                <a class="btn btn-xs btn-success ask-question-vote-up"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+            </div>
+            <div class="ask-question-answer-link">
+                <a href="{% url 'question' question.id %}">Ответы ({{ question.answers }})</a>
+            </div>
+            <div class="ask-tags ask-question-tags">
+                {% for tag in question.tags %}
+                <a href="{% url 'tag' tag.tag %}" class="ask-tags-tag ask-tags-tag_color_{{ tag.color }}">{{ tag.tag }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if questions.has_other_pages %}
+<nav>
+<ul class="pagination">
+    {% if questions.has_previous %}
+    <li>
+        <a href="?page={{ questions.previous_page_number }}" aria-label="Раньше">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+    </li>
+    {% endif %}
+    <li><a href="?page={{ questions.number }}">{{ questions.number }}</a></li>
+    {% if questions.has_next %}
+    <li>
+        <a href="?page={{ questions.next_page_number }}" aria-label="Дальше">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+    </li>
+    {% endif %}
+</ul>
+</nav>
+{% endif %}
+
+{% endblock %}

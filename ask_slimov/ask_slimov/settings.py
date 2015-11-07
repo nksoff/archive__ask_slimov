@@ -66,6 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ask_slimov.context_processors.popular_tags',
+                'ask_slimov.context_processors.best_users',
             ],
         },
     },
