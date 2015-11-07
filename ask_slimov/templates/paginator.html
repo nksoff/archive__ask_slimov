@@ -1,0 +1,22 @@
+{% if objects.has_other_pages %}
+<nav>
+<ul class="pagination pagination-lg">
+    {% if objects.has_previous %}
+    <li>
+        <a href="?page={{ objects.previous_page_number }}" aria-label="Раньше">
+            <span aria-hidden="true">&laquo;&laquo;</span>
+        </a>
+    </li>
+    {% endif %}
+    <li class="active"><span>{{ objects.number }}</span></li>
+    {% if objects.has_next %}
+    <li>
+        <a href="?page={{ objects.next_page_number }}" aria-label="Дальше">
+            <span aria-hidden="true">&raquo;&raquo;</span>
+        </a>
+    </li>
+    {% endif %}
+</ul>
+</nav>
+{% endif %}
+

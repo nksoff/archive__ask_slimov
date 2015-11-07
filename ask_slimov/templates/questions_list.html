@@ -38,26 +38,6 @@
     {% endfor %}
 </div>
 
-{% if questions.has_other_pages %}
-<nav>
-<ul class="pagination">
-    {% if questions.has_previous %}
-    <li>
-        <a href="?page={{ questions.previous_page_number }}" aria-label="Раньше">
-            <span aria-hidden="true">&laquo;</span>
-        </a>
-    </li>
-    {% endif %}
-    <li><a href="?page={{ questions.number }}">{{ questions.number }}</a></li>
-    {% if questions.has_next %}
-    <li>
-        <a href="?page={{ questions.next_page_number }}" aria-label="Дальше">
-            <span aria-hidden="true">&raquo;</span>
-        </a>
-    </li>
-    {% endif %}
-</ul>
-</nav>
-{% endif %}
+{%include 'paginator.html' with objects=questions %}
 
 {% endblock %}
