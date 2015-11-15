@@ -62,7 +62,7 @@
                     <div class="ask-body-block-title">Популярные теги</div>
                     <div class="ask-tags">
                         {% for tag in popular_tags %}
-                        <a href="{% url 'tag' tag.tag  %}" class="ask-tags-tag ask-tags-tag_color_{{ tag.color }}">{{ tag.tag }}</a>
+                        <a href="{% url 'tag' tag.title  %}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
                         {% endfor %}
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                         {% for u in best_users %}
                         <li class="ask-best-members-person">
                             <span class="ask-best-members-person-icon"></span>
-                            <a href="">{{ u.name }}</a>
+                            <a href="">{{ u.last_name }} {{ u.first_name }}</a>
                         </li>
                         {% endfor %}
                     </ol>
