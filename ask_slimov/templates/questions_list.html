@@ -12,7 +12,9 @@
     <div class="ask-question ask-question-{% if forloop.counter|divisibleby:2 %}white{% else %}gray{% endif %}">
         <div class="ask-question-info">
             <div class="ask-user-avatar-container">
-                <img src="http://dummyimage.com/100x100/009/fff" class="user-avatar" />
+                {% load static %}
+                <img src="{{ question.author.profile.avatar.url }}" class="user-avatar" alt="{{ question.author.last_name }} {{ question.author.first_name }}" />
+                <span class="small">{{ question.author.last_name }} {{ question.author.first_name }}</span>
             </div>
             <div class="ask-question-data">
                 <div class="ask-question-title"><a href="{% url 'question' question.id %}">{{ question.title }}</a></div>
@@ -22,15 +24,15 @@
         <div class="ask-question-options">
             <div class="ask-question-vote">
                 <a class="btn btn-xs btn-danger ask-question-vote-down"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                <span class="ask-question-vote-count">{{ question.votes }}</span>
+                <span class="ask-question-vote-count">{{ question.likes }}</span>
                 <a class="btn btn-xs btn-success ask-question-vote-up"><span class="glyphicon glyphicon-thumbs-up"></span></a>
             </div>
             <div class="ask-question-answer-link">
                 <a href="{% url 'question' question.id %}">Ответы ({{ question.answers }})</a>
             </div>
             <div class="ask-tags ask-question-tags">
-                {% for tag in question.tags %}
-                <a href="{% url 'tag' tag.tag %}" class="ask-tags-tag ask-tags-tag_color_{{ tag.color }}">{{ tag.tag }}</a>
+                {% for tag in question.tags.all %}
+                <a href="{% url 'tag' tag.title %}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
                 {% endfor %}
             </div>
         </div>

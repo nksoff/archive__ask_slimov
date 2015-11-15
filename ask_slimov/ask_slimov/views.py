@@ -1,26 +1,14 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, render_to_response
 
 from ask_slimov import helpers
+from ask_slimov.models import Question, Answer, QuestionLike, Tag
+from django.contrib.auth.models import User
 
 # new questions
 def questions_new(request):
-    from random import choice, randint
-    tags = ['mysql', 'technopark', 'mail.ru', 'php', 'perl', 'ruby on rails', 'paraboloid', 'binary tree', 'css', 'json', 'cpp', 'binary-tree', 'bootstrap css', 'social network', 'c++11', ]
-    colors = ['success', 'primary', 'default', 'danger', 'info']
-    tags = [{ 'tag': tag, 'color': choice(colors), } for tag in tags]
-
-    questions = [
-        {
-            'id': i,
-            'title': 'Question ##' + str(i),
-            'text': 'Hey, guys! Sorry for my English. The question: At what value of variable n the following code will cause memory leaks?',
-            'votes': i + randint(1, i*10),
-            'answers': i + randint(0, 5),
-            'tags': [choice(tags) for j in range(0, i % 3 + 1)],
-        } for i in range(1, 45)
-    ]
+    questions = Question.objects.list_new()
 
     pagination = helpers.paginate(questions, request)
     return render(request, 'questions_list.html',
@@ -32,21 +20,7 @@ def questions_new(request):
 
 # hot questions
 def questions_hot(request):
-    from random import choice, randint
-    tags = ['mysql', 'technopark', 'mail.ru', 'php', 'perl', 'ruby on rails', 'paraboloid', 'binary tree', 'css', 'json', 'cpp', 'binary-tree', 'bootstrap css', 'social network', 'c++11', ]
-    colors = ['success', 'primary', 'default', 'danger', 'info']
-    tags = [{ 'tag': tag, 'color': choice(colors), } for tag in tags]
-
-    questions = [
-        {
-            'id': i,
-            'title': 'Hot Question ##' + str(i),
-            'text': 'Hey, guys! Sorry for my English. The question: At what value of variable n the following code will cause memory leaks?',
-            'votes': i + randint(1, i*10),
-            'answers': i + randint(0, 5),
-            'tags': [choice(tags) for j in range(0, i % 3 + 1)],
-        } for i in range(1, 45)
-    ]
+    questions = Question.objects.list_hot()
 
     pagination = helpers.paginate(questions, request)
     return render(request, 'questions_list.html',
@@ -58,24 +32,18 @@ def questions_hot(request):
 
 # questiong by tag
 def questions_tag(request, tag):
-    from random import randint
-
-    questions = [
-        {
-            'id': i,
-            'title': 'Tag Question ##' + str(i),
-            'text': 'Hey, guys! Sorry for my English. The question: At what value of variable n the following code will cause memory leaks?',
-            'votes': i + randint(1, i*10),
-            'answers': i + randint(0, 5),
-            'tags': [{'tag': tag, 'color': 'info',}],
-        } for i in range(1, 45)
-    ]
+    try:
+        tag = Tag.objects.get_by_title(tag)
+    except Tag.DoesNotExist:
+        raise Http404()
+    
+    questions = Question.objects.list_tag(tag)
 
     pagination = helpers.paginate(questions, request)
     return render(request, 'questions_list.html',
             {
                 'questions': pagination,
-                'title': 'Тег ' + str(tag),
+                'title': u'Тег ' + tag.title,
             })
 
 # single question

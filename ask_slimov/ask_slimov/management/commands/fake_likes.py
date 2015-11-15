@@ -36,7 +36,7 @@ class Command(BaseCommand):
                 QuestionLike.objects.add_or_update(
                         author=choice(users),
                         question=q,
-                        value=choice([-1, 1, 1])
+                        value=choice([-1, 1])
                         )
 
         answers = Answer.objects.all()
@@ -47,5 +47,5 @@ class Command(BaseCommand):
                 AnswerLike.objects.add_or_update(
                         author=choice(users),
                         answer=ans,
-                        value=choice([-1, 1, 1])
+                        value=choice([-1, 1])
                         )
