@@ -114,3 +114,24 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/uploads/'
+
+LOGGING = {
+    'disable_existing_loggers': False,
+    'version': 1,
+    'handlers': {
+        'file': {
+            'class': 'logging.FileHandler',
+            'level': 'DEBUG',
+            'filename': '../log.log',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.db': {
+        },
+    },
+}

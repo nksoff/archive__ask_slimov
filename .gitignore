@@ -1,6 +1,7 @@
 # Project
 ask_slimov/uploads/*
 *.pyc
+*.log
 
 # Linux / Unix
 !.gitkeep
