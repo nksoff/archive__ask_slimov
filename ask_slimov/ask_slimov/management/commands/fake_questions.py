@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
 from django.contrib.auth.models import User
-from ask_slimov.models import Question, QuestionLike
+from ask_slimov.models import Question
 
 from random import choice, randint
 from faker import Factory
@@ -21,7 +21,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         fake = Factory.create()
-        fakeru = Factory.create('ru_RU')
 
         number = int(options['number'])
 
@@ -50,5 +49,5 @@ class Command(BaseCommand):
                     fake.paragraph(nb_sentences=randint(4, 17), variable_nb_sentences=True),
                     )
             q.author = choice(users)
-            self.stdout.write(q.text)
             q.save()
+            self.stdout.write('[%d]' % q.id)
