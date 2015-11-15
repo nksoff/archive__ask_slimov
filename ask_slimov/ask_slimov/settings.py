@@ -80,6 +80,12 @@ WSGI_APPLICATION = 'ask_slimov.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ask_slimov',
+        'USER': 'ask_slimov',
+        'PASSWORD': 'ask_slimov',
+    }
 }
 
 
