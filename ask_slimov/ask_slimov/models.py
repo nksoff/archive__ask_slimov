@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-import datetime
+from django.utils import timezone
 
 # user profile
 class Profile(models.Model):
@@ -34,7 +34,7 @@ class Question(models.Model):
     title = models.CharField(max_length=100)
     text = models.TextField()
     author = models.ForeignKey(User)
-    date = models.DateTimeField(default=datetime.datetime.now)
+    date = models.DateTimeField(default=timezone.now)
     tags = models.ManyToManyField(Tag)
 
 
@@ -49,7 +49,8 @@ class QuestionLike(models.Model):
 class Answer(models.Model):
     text = models.TextField()
     question = models.ForeignKey(Question)
-    user = models.ForeignKey(User)
+    author = models.ForeignKey(User)
+    date = models.DateTimeField(default=timezone.now)
     correct = models.BooleanField(default=False)
 
 
