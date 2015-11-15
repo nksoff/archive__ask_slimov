@@ -33,23 +33,19 @@ class Command(BaseCommand):
         for q in questions:
             self.stdout.write('question [%d]' % q.id)
             for i in range(0, number_questions):
-                like = QuestionLike()
-
-                like.author = choice(users)
-                if len(QuestionLike.objects.filter(author=like.author, question=q)) == 0:
-                    like.question = q
-                    like.value = choice([-1, 1, 1])
-                    like.save()
+                QuestionLike.objects.add_or_update(
+                        author=choice(users),
+                        question=q,
+                        value=choice([-1, 1, 1])
+                        )
 
         answers = Answer.objects.all()
 
         for ans in answers:
             self.stdout.write('answer [%d]' % ans.id)
             for i in range(0, number_answers):
-                like = AnswerLike()
-
-                like.author = choice(users)
-                if len(AnswerLike.objects.filter(author=like.author, answer=ans)) == 0:
-                    like.answer = ans
-                    like.value = choice([-1, 1, 1])
-                    like.save()
+                AnswerLike.objects.add_or_update(
+                        author=choice(users),
+                        answer=ans,
+                        value=choice([-1, 1, 1])
+                        )
