@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 from ask_slimov.models import Question, QuestionLike, Answer, AnswerLike
 
 from random import choice, randint
-from faker import Factory
-import os
 
 class Command(BaseCommand):
     help = 'Creates fake likes'
@@ -26,8 +24,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        fake = Factory.create()
-
         number_answers = int(options['number_answers'])
         number_questions = int(options['number_questions'])
 

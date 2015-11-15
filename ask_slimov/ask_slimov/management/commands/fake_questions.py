@@ -50,4 +50,4 @@ class Command(BaseCommand):
                     )
             q.author = choice(users)
             q.save()
-            self.stdout.write('[%d]' % q.id)
+            self.stdout.write('added question [%d]' % (q.id)
