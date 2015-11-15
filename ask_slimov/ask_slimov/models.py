@@ -54,6 +54,7 @@ class Tag(models.Model):
     def __unicode__(self):
         return "[" + str(self.id) + "] " + self.title
 
+
 #
 # custom query set for questions
 #
@@ -61,6 +62,13 @@ class QuestionQuerySet(models.QuerySet):
     # preloads tags
     def with_tags(self):
         return self.prefetch_related('tags')
+
+    # preloads answers
+    def with_answers(self):
+        res = self.prefetch_related('answer_set')
+        res = self.prefetch_related('answer_set__author')
+        res = self.prefetch_related('answer_set__author__profile')
+        return res
 
     # loads number of answers
     def with_answers_count(self):
@@ -90,6 +98,11 @@ class QuestionManager(models.Manager):
     # list of questions with tag
     def list_tag(self, tag):
         return self.filter(tags=tag)
+
+    # single question
+    def get_single(self, id):
+        res = self.get_queryset()
+        return res.with_answers().get(pk=id)
 
 #
 # question
@@ -162,25 +175,25 @@ class QuestionLike(models.Model):
 
 
 #
+# custom query set for answers
+#
+class AnswerQuerySet(models.QuerySet):
+    # loads author
+    def with_author(self):
+        return self.select_related('author').select_related('author__profile')
+
+    # loads question
+    def with_question(self):
+        return self.select_related('question')
+
+#
 # answers manager
 #
 class AnswerManager(models.Manager):
-    # adds number of likes to each answer
-    def with_likes(self):
-        return self.annotate(likes=Sum('answerlike__value'))
-
-    # sorts answers using rating (likes)
-    def order_by_likes(self):
-        return self.with_likes().order_by('-likes')
-
-    # sorts answers using creation date
-    def order_by_date(self):
-        return self.order_by('-date')
-
-    # add a condition: with author
-    def has_author(self, author):
-        return self.filter(author=author)
-
+    # custom query set
+    def get_queryset(self):
+        res = QuestionQuerySet(self.model, using=self._db)
+        return res.with_author()
 
 #
 # answer
@@ -199,7 +212,7 @@ class Answer(models.Model):
         return "[" + str(self.id) + "] " + self.text
 
     class Meta:
-        ordering = ['-date']
+        ordering = ['-correct', '-likes', '-date']
 
 
 #

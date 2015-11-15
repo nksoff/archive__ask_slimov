@@ -1,36 +1,38 @@
 {% extends "layout.html" %}
-{%block title %}{{ title }}{% endblock %}
+{%block title %}{{ question.title }}{% endblock %}
 {%block page_title %}{% endblock %}
 
 {%block content %}
     <div class="ask-question ask-question-noborder">
         <div class="ask-question-info">
             <div class="ask-user-avatar-container">
-                <img src="http://dummyimage.com/110x110/009/fff" class="user-avatar" />
+                <img src="{{ question.author.profile.avatar.url }}" class="user-avatar" title="{{ question.author.last_name }} {{ question.author.first_name }}" />
+                <span class="small">{{ question.author.last_name }} {{ question.author.first_name }}</span>
             </div>
             <div class="ask-question-data">
-                <div class="ask-question-title-big">{{ title }}</div>
-                <p class="ask-question-text">{{ text }}</div>
+                <div class="ask-question-title-big">{{ question.title }}</div>
+                <p class="ask-question-text">{{ question.text }}</div>
         </div>
         <div class="ask-question-options">
             <div class="ask-question-vote">
                 <a class="btn btn-xs btn-danger ask-question-vote-down"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                <span class="ask-question-vote-count">{{ votes }}</span>
+                <span class="ask-question-vote-count">{{ question.likes }}</span>
                 <a class="btn btn-xs btn-success ask-question-vote-up"><span class="glyphicon glyphicon-thumbs-up"></span></a>
             </div>
             <div class="ask-tags ask-question-tags">
-                {% for tag in tags %}
-                <a href="{% url 'tag' tag.tag %}" class="ask-tags-tag ask-tags-tag_color_{{ tag.color }}">{{ tag.tag }}</a>
+                {% for tag in question.tags.all %}
+                <a href="{% url 'tag' tag.title %}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
                 {% endfor %}
             </div>
         </div>
         <hr />
         <div class="ask-answers">
-            {% for answer in answers %}
+            {% for answer in question.answer_set.all %}
             <div class="ask-answer ask-answer-{% if forloop.counter|divisibleby:2 %}white{% else %}gray{% endif %}">
                 <div class="ask-answer-info">
                     <div class="ask-user-avatar-container">
-                        <img src="http://dummyimage.com/80x80/090/fff" class="user-avatar" />
+                        <img src="{{ answer.author.profile.avatar.url }}" class="user-avatar" title="{{ answer.author.last_name }} {{ answer.author.first_name }}" />
+                        <span class="small">{{ answer.author.last_name }} {{ answer.author.first_name }}</span>
                     </div>
                     <div class="ask-answer-data">
                         <p class="ask-answer-text">{{ answer.text }}</p>
@@ -39,7 +41,7 @@
                 <div class="ask-answer-options">
                     <div class="ask-answer-vote">
                         <a class="btn btn-xs btn-danger ask-answer-vote-down"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                        <span class="ask-answer-vote-count">{{ answer.votes }}</span>
+                        <span class="ask-answer-vote-count">{{ answer.likes }}</span>
                         <a class="btn btn-xs btn-success ask-answer-vote-up"><span class="glyphicon glyphicon-thumbs-up"></span></a>
                     </div>
                     <div class="ask-answer-correct">
