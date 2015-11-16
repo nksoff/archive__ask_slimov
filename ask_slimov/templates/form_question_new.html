@@ -3,36 +3,43 @@
 {%block page_title %}Задать вопрос{% endblock %}
 
 {%block content %}
-    <div class="ask-ask-form-error">
-        <div class="alert alert-danger" role="alert">
-            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            Укажите заголовок вопроса
+    {% for e in form.non_field_errors %}
+        <div class="ask-ask-form-error">
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                {{ e }}
+            </div>
         </div>
-    </div>
+    {% endfor %}
     <div class="ask-ask-form">
-        <form class="form-horizontal">
-            <div class="form-group has-error">
-                <label for="title" class="col-sm-3 control-label">Заголовок</label>
+        <form class="form-horizontal" method="post" action="">
+            {% csrf_token %}
+            <div class="form-group {% if form.title.errors %} has-error{% endif %}">
+                <label for="title" class="col-sm-3 control-label">{{ form.title.label }}</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" id="title" placeholder="Заголовок вопроса">
+                    {{ form.title }}
+                    {% if field.title.errors %} {% for e in field.title.errors %}{{ e }}{% endfor %}
+                    {% endif %}
                 </div>
             </div>
-            <div class="form-group">
-                <label for="text" class="col-sm-3 control-label">Текст</label>
+            <div class="form-group {% if form.text.errors %} has-error{% endif %}">
+                <label for="text" class="col-sm-3 control-label">{{ form.text.label }}</label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" id="text" rows="10"></textarea>
+                    {{ form.text }}
+                    {% if field.text.errors %} {% for e in field.text.errors %}{{ e }}{% endfor %}
+                    {% endif %}
                 </div>
             </div>
             <div class="form-group">
                 <label for="tag" class="col-sm-3 control-label">Теги</label>
                 <div class="col-sm-2">
-                    <input type="text" class="form-control" id="tag1" placeholder="тег 1">
+                    {{ form.tag1 }}
                 </div>
                 <div class="col-sm-2">
-                    <input type="text" class="form-control" id="tag2" placeholder="тег 2">
+                    {{ form.tag2 }}
                 </div>
                 <div class="col-sm-2">
-                    <input type="text" class="form-control" id="tag3" placeholder="тег 3">
+                    {{ form.tag3 }}
                 </div>
             </div>
             <div class="form-group">

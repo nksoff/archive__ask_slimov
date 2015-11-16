@@ -4,11 +4,12 @@ from django.shortcuts import render, render_to_response
 
 from ask_slimov import helpers
 from ask_slimov.models import Question, Answer, QuestionLike, Tag
-from ask_slimov.forms import LoginForm, SignupForm, ProfileEditForm, AnswerForm
+from ask_slimov.forms import LoginForm, SignupForm, ProfileEditForm, AnswerForm, QuestionForm
 from ask_slimov.decorators import need_login
 
 from django.contrib import auth
 from django.forms.models import model_to_dict
+from django.core.urlresolvers import reverse
 
 # new questions
 def questions_new(request):
@@ -146,4 +147,14 @@ def form_profile_edit(request):
 # new question form
 @need_login
 def form_question_new(request):
-    return render(request, 'form_question_new.html', {})
+    if request.method == "POST":
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            q = form.save(request.user)
+            return HttpResponseRedirect(reverse('question', kwargs={'id': q.id}))
+    else:
+        form = QuestionForm()
+
+    return render(request, 'form_question_new.html', {
+        'form': form,
+        })

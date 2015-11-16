@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db.models import Count, Sum
 
+from random import choice
+
 # user profile
 class Profile(models.Model):
     user = models.OneToOneField(User)
@@ -28,6 +30,14 @@ class TagManager(models.Manager):
     # searches using title
     def get_by_title(self, title):
         return self.get(title=title)
+
+    # finds or creates
+    def get_or_create(self, title):
+        try:
+            tag = self.get_by_title(title)
+        except Tag.DoesNotExist:
+            tag = self.create(title=title, color=choice(Tag.COLORS)[0])
+        return tag
 
 #
 # tag
