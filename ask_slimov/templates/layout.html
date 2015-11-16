@@ -50,7 +50,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="{% url 'logout' %}">
+                                <a href="{% url 'logout' %}?continue={{ request.path }}">
                                     <span class="glyphicon glyphicon-share-alt"></span>
                                     Выйти
                                 </a>

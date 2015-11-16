@@ -45,7 +45,7 @@
                         <a class="btn btn-xs btn-success ask-answer-vote-up"><span class="glyphicon glyphicon-thumbs-up"></span></a>
                     </div>
                     <div class="ask-answer-correct">
-                        <a href="" class="btn btn-large {% if answer.correct %}btn-success{% else %}btn-default{% endif %}"><span class="glyphicon glyphicon-ok"></span> Правильный</a>
+                        <a class="btn btn-large {% if answer.correct %}btn-success{% else %}btn-default{% endif %}" {% if question.author.id != request.user.id %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-ok"></span> Правильный</a>
                     </div>
                 </div>
             </div>

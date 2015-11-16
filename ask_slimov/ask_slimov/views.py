@@ -4,7 +4,7 @@ from django.shortcuts import render, render_to_response
 
 from ask_slimov import helpers
 from ask_slimov.models import Question, Answer, QuestionLike, Tag
-from ask_slimov.forms import LoginForm
+from ask_slimov.forms import LoginForm, SignupForm
 from ask_slimov.decorators import need_login
 
 from django.contrib import auth
@@ -62,8 +62,9 @@ def question(request, id):
 
 # logout
 def logout(request):
+    redirect = request.GET.get('continue', '/')
     auth.logout(request)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(redirect)
 
 # login form
 def form_login(request):
@@ -89,7 +90,18 @@ def form_signup(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('/')
 
-    return render(request , 'form_signup.html', {})
+    if request.method == "POST":
+        form = SignupForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save()
+            auth.login(request, user)
+            return HttpResponseRedirect('/')
+    else:
+        form = SignupForm()
+
+    return render(request , 'form_signup.html', {
+            'form': form,
+        })
 
 # new question form
 @need_login
