@@ -5,10 +5,10 @@ from django.shortcuts import render, render_to_response
 from ask_slimov import helpers
 from ask_slimov.models import Question, Answer, QuestionLike, Tag
 from ask_slimov.forms import LoginForm
+from ask_slimov.decorators import need_login
 
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
 
 # new questions
 def questions_new(request):
@@ -63,12 +63,16 @@ def question(request, id):
 
 # login form
 def form_login(request):
+    redirect = request.GET.get('continue', '/')
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(redirect)
+
     if request.method == "POST":
         form = LoginForm(request.POST)
 
         if form.is_valid():
             login(request, form.cleaned_data['user'])
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect(redirect)
     else:
         form = LoginForm()
 
@@ -78,8 +82,12 @@ def form_login(request):
 
 # register form
 def form_signup(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/')
+
     return render(request , 'form_signup.html', {})
 
 # new question form
+@need_login
 def form_question_new(request):
     return render(request , 'form_question_new.html', {})

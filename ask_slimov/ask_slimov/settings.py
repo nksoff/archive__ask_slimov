@@ -115,6 +115,8 @@ STATICFILES_DIRS = (
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/uploads/'
 
+LOGIN_URL = '/login/'
+
 LOGGING = {
     'disable_existing_loggers': False,
     'version': 1,

@@ -19,12 +19,13 @@ class LoginForm(forms.Form):
             widget=forms.PasswordInput(
                 attrs={ 'class': 'form-control', 'placeholder': '*******', }
                 ),
-            label="Пароль"
+            label="Пароль",
+            required=True
             )
 
     def clean(self):
         data = self.cleaned_data
-        user = authenticate(username=data['login'], password=data['password'])
+        user = authenticate(username=data.get('login', ''), password=data.get('password', ''))
 
         if user is not None:
             if user.is_active:
