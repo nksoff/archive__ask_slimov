@@ -4,10 +4,11 @@ from django.shortcuts import render, render_to_response
 
 from ask_slimov import helpers
 from ask_slimov.models import Question, Answer, QuestionLike, Tag
-from ask_slimov.forms import LoginForm, SignupForm
+from ask_slimov.forms import LoginForm, SignupForm, ProfileEditForm
 from ask_slimov.decorators import need_login
 
 from django.contrib import auth
+from django.forms.models import model_to_dict
 
 # new questions
 def questions_new(request):
@@ -21,6 +22,7 @@ def questions_new(request):
                 'key': 'new',
             })
 
+
 # hot questions
 def questions_hot(request):
     questions = Question.objects.list_hot()
@@ -32,6 +34,7 @@ def questions_hot(request):
                 'title': 'Лучшие вопросы',
                 'key': 'hot',
             })
+
 
 # questiong by tag
 def questions_tag(request, tag):
@@ -49,6 +52,7 @@ def questions_tag(request, tag):
                 'title': u'Тег ' + tag.title,
             })
 
+
 # single question
 def question(request, id):
     try:
@@ -60,11 +64,14 @@ def question(request, id):
                 'question': q,
             })
 
+
 # logout
+@need_login
 def logout(request):
     redirect = request.GET.get('continue', '/')
     auth.logout(request)
     return HttpResponseRedirect(redirect)
+
 
 # login form
 def form_login(request):
@@ -85,6 +92,7 @@ def form_login(request):
             'form': form,
         })
 
+
 # register form
 def form_signup(request):
     if request.user.is_authenticated():
@@ -99,11 +107,33 @@ def form_signup(request):
     else:
         form = SignupForm()
 
-    return render(request , 'form_signup.html', {
+    return render(request, 'form_signup.html', {
             'form': form,
         })
+
+
+# profile edit form
+@need_login
+def form_profile_edit(request):
+    if request.method == "POST":
+        form = ProfileEditForm(request.POST)
+        if form.is_valid():
+            form.save(request.user)
+            return HttpResponseRedirect('')
+    else:
+        u = model_to_dict(request.user)
+        up = request.user.profile
+        u['info'] = up.info
+        form = ProfileEditForm(u)
+
+    return render(request, 'form_profile_edit.html', {
+            'form': form,
+            'u': request.user,
+            'username': request.user.username,
+        })
+
 
 # new question form
 @need_login
 def form_question_new(request):
-    return render(request , 'form_question_new.html', {})
+    return render(request, 'form_question_new.html', {})

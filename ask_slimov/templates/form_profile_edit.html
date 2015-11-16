@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{%block title %}Редактирование профиля{% endblock %}
+{%block page_title %}Редактирование профиля{% endblock %}
+
+{%block content %}
+    {% for e in form.non_field_errors %}
+        <div class="ask-signup-form-error">
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                {{ e }}
+            </div>
+        </div>
+    {% endfor %}
+    <div class="ask-signup-form">
+        <form class="form-horizontal" method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username" class="col-sm-3 control-label">Логин</label>
+                <div class="col-sm-6">
+                    {{ u.username }}
+                </div>
+            </div>
+            {%for field in form  %}
+            <div class="form-group{% if field.errors %} has-error{% endif %}">
+                <label for="{{ field.name }}" class="col-sm-3 control-label">{{ field.label }}</label>
+                <div class="col-sm-6">
+                    {% if field.name == 'avatar' %}
+                        <img src="{{ u.profile.avatar.url }}" class="" />
+                    {% endif %}
+                    {{ field }}
+                    {% if field.errors %} {% for e in field.errors %}{{ e }}{% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-6">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+

@@ -44,7 +44,7 @@
                                 </a>
                             </li>
                             <li class="ask-navbar_with-image">
-                                <a href="">
+                                <a href="{% url 'profile_edit' %}">
                                     <img src="{{ request.user.profile.avatar.url }}" class="ask-navbar-image" />
                                     {{ request.user.last_name }} {{ request.user.first_name }}
                                 </a>
