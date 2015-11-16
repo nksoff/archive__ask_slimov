@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 
 from ask_slimov import helpers
 from ask_slimov.models import Question, Answer, QuestionLike, Tag
+from ask_slimov.forms import LoginForm
+
+from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 # new questions
 def questions_new(request):
@@ -59,7 +63,18 @@ def question(request, id):
 
 # login form
 def form_login(request):
-    return render(request , 'form_login.html', {})
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            login(request, form.cleaned_data['user'])
+            return HttpResponseRedirect('/')
+    else:
+        form = LoginForm()
+
+    return render(request, 'form_login.html', {
+            'form': form,
+        })
 
 # register form
 def form_signup(request):
@@ -68,30 +83,3 @@ def form_signup(request):
 # new question form
 def form_question_new(request):
     return render(request , 'form_question_new.html', {})
-
-def info(request):
-    to_show = [
-        ['GET - параметры', request.GET],
-        ['POST - параметры', request.POST]
-    ]
-
-    output = ['<html>', '<h1>%s</h1>' % 'Привет, мир!']
-
-    for params in to_show:
-        output.append('<h3>%s (%d)</h3>'
-                % (params[0], len(params[1])))
-        output.append('<pre>')
-
-        output.extend(
-            [
-                "%s ==> '%s' \n"
-                    % (k, v) for k,v in params[1].items()
-            ]
-        )
-
-        output.append('</pre>')
-
-    output.append('</html>')
-
-    output.append('</html>')
-    return HttpResponse(output)

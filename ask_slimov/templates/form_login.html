@@ -4,24 +4,23 @@
 
 {%block content %}
     <div class="ask-login-form-error">
+        {%for e in form.non_field_errors %}
         <div class="alert alert-danger" role="alert">
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            Указан неверный логин или пароль.
+            {{ e }}
         </div>
+        {% endfor %}
     </div>
     <div class="ask-login-form">
-        <form class="form-horizontal">
+        <form class="form-horizontal" method="post" action="">
+            {% csrf_token %}
             <div class="form-group">
-                <label for="login" class="col-sm-2 control-label">Логин</label>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control" id="login" placeholder="me">
-                </div>
+                <label for="login" class="col-sm-2 control-label">{{ form.login.label }}</label>
+                <div class="col-sm-5"> {{ form.login }} </div>
             </div>
             <div class="form-group">
-                <label for="password" class="col-sm-2 control-label">Пароль</label>
-                <div class="col-sm-5">
-                    <input type="password" class="form-control" id="password" placeholder="***********">
-                </div>
+                <label for="password" class="col-sm-2 control-label">{{ form.password.label }}</label>
+                <div class="col-sm-5"> {{ form.password }} </div>
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-2">
