@@ -161,17 +161,44 @@ class ProfileEditForm(forms.Form):
             required=False, label="Аватар"
             )
 
+    def clean_password2(self):
+        pass1 = self.cleaned_data.get('password1', '')
+        pass2 = self.cleaned_data.get('password2', '')
+
+        if pass1 != pass2:
+            raise forms.ValidationError(u'Пароли не совпадают')
+
     def save(self, user):
         data = self.cleaned_data
         user.first_name = data.get('first_name')
         user.last_name = data.get('last_name')
         user.email = data.get('email')
-        # TODO: passwords
+
+        pass1 = self.cleaned_data.get('password1', '')
+        if pass1 != '':
+            user.set_password(pass1)
+
         user.save()
 
         up = user.profile
         up.info = data.get('info')
-        # TODO: avatar
+
+        if data.get('avatar') is not None:
+            avatar = data.get('avatar')
+            up.avatar.save('%s_%s' % (user.username, avatar.name), avatar, save=True)
+
         up.save()
 
         return self
+
+class AnswerForm(forms.Form):
+    text = forms.CharField(
+            widget=forms.Textarea(
+                attrs={'class': 'form-control', 'rows': '3', 'placeholder': u'Введите ваш ответ', }
+                ),
+            required=True
+            )
+
+    def save(self, question, author):
+        data = self.cleaned_data
+        return question.answer_set.create(text=data.get('text'), author=author)

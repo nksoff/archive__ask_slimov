@@ -4,7 +4,7 @@ from django.shortcuts import render, render_to_response
 
 from ask_slimov import helpers
 from ask_slimov.models import Question, Answer, QuestionLike, Tag
-from ask_slimov.forms import LoginForm, SignupForm, ProfileEditForm
+from ask_slimov.forms import LoginForm, SignupForm, ProfileEditForm, AnswerForm
 from ask_slimov.decorators import need_login
 
 from django.contrib import auth
@@ -60,8 +60,18 @@ def question(request, id):
     except Question.DoesNotExist:
         raise Http404
 
+    if request.method == "POST":
+        answer_form = AnswerForm(request.POST)
+
+        if answer_form.is_valid():
+            answer = answer_form.save(q, request.user)
+            return HttpResponseRedirect('#answer_' + str(answer.id))
+    else:
+        answer_form = AnswerForm()
+
     return render(request, 'question.html', {
                 'question': q,
+                'answer_form': answer_form,
             })
 
 

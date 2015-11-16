@@ -28,7 +28,7 @@
         <hr />
         <div class="ask-answers">
             {% for answer in question.answer_set.all %}
-            <div class="ask-answer ask-answer-{% if forloop.counter|divisibleby:2 %}white{% else %}gray{% endif %}">
+            <div id="answer_{{ answer.id }}" class="ask-answer ask-answer-{% if forloop.counter|divisibleby:2 %}white{% else %}gray{% endif %}">
                 <div class="ask-answer-info">
                     <div class="ask-user-avatar-container">
                         <img src="{{ answer.author.profile.avatar.url }}" class="user-avatar" title="{{ answer.author.last_name }} {{ answer.author.first_name }}" />
@@ -51,5 +51,24 @@
             </div>
             {% endfor %}
         </div>
+        <hr />
+        {%if request.user.is_authenticated  %}
+        <div class="ask-answer-form">
+            <div class="ask-answer-form-title">Ваш ответ</div>
+            <form class="form-horizontal" method="post" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="col-sm-8">
+                        {{ answer_form.text }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4">
+                        <button type="submit" class="btn btn-primary">Ответить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {% endif %}
     </div>
 {% endblock %}
