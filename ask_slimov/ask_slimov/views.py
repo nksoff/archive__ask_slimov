@@ -7,8 +7,7 @@ from ask_slimov.models import Question, Answer, QuestionLike, Tag
 from ask_slimov.forms import LoginForm
 from ask_slimov.decorators import need_login
 
-from django.contrib.auth import login, logout
-from django.contrib.auth.models import User
+from django.contrib import auth
 
 # new questions
 def questions_new(request):
@@ -61,6 +60,11 @@ def question(request, id):
                 'question': q,
             })
 
+# logout
+def logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect('/')
+
 # login form
 def form_login(request):
     redirect = request.GET.get('continue', '/')
@@ -71,7 +75,7 @@ def form_login(request):
         form = LoginForm(request.POST)
 
         if form.is_valid():
-            login(request, form.cleaned_data['user'])
+            auth.login(request, form.cleaned_data['user'])
             return HttpResponseRedirect(redirect)
     else:
         form = LoginForm()

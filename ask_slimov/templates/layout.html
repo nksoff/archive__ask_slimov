@@ -37,6 +37,25 @@
                             </div>
                         </form>
                         <ul class="nav navbar-nav navbar-right">
+                            {%if request.user.is_authenticated  %}
+                            <li>
+                                <a href="{% url 'ask' %}">
+                                    <span class="glyphicon glyphicon-plus" title="Задать вопрос"></span>
+                                </a>
+                            </li>
+                            <li class="ask-navbar_with-image">
+                                <a href="">
+                                    <img src="{{ request.user.profile.avatar.url }}" class="ask-navbar-image" />
+                                    {{ request.user.last_name }} {{ request.user.first_name }}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'logout' %}">
+                                    <span class="glyphicon glyphicon-share-alt"></span>
+                                    Выйти
+                                </a>
+                            </li>
+                            {% else %}
                             <li><a href="{% url 'login' %}">
                                     <span class="glyphicon glyphicon-user"></span>
                                     Войти
@@ -45,6 +64,7 @@
                                     <span class="glyphicon glyphicon-plus-sign"></span>
                                     Регистрация
                             </a></li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>

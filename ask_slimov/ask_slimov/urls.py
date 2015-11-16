@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^tag/(?P<tag>.+)/?$',         views.questions_tag,        name = 'tag'),
     url(r'^question/(?P<id>\d+)/?$',    views.question,             name = 'question'),
     url(r'^login/?$',                   views.form_login,           name = 'login'),
+    url(r'^logout/?$',                  views.logout,               name = 'logout'),
     url(r'^signup/?$',                  views.form_signup,          name = 'signup'),
     url(r'^ask/?$',                     views.form_question_new,    name = 'ask'),
     url(r'^admin/',                     include(admin.site.urls)),
