@@ -3,15 +3,26 @@
 <ul class="pagination pagination-lg">
     {% if objects.has_previous %}
     <li>
-        <a href="?page={{ objects.previous_page_number }}" aria-label="Раньше">
-            <span aria-hidden="true">&laquo;&laquo;</span>
+        <a href="?{{ objects.key }}={{ objects.previous_page_number }}" title="Раньше">
+            <span>&laquo;&laquo;</span>
         </a>
     </li>
     {% endif %}
-    <li class="active"><span>{{ objects.number }}</span></li>
+    {% for page in objects.paginator.page_range %}
+    {% if page > objects.from_left and page < objects.from_right and page != objects.number  %}
+        <li>
+            <a href="?{{ objects.key }}={{ page }}">
+                <span> {{ page }}</span>
+            </a>
+        </li>
+    {% elif page == objects.number %}
+        <li class="active"><span>{{ page }}</span></li>
+    {% endif %}
+    {% endfor %}
+
     {% if objects.has_next %}
     <li>
-        <a href="?page={{ objects.next_page_number }}" aria-label="Дальше">
+        <a href="?{{ objects.key }}={{ objects.next_page_number }}" title="Дальше">
             <span aria-hidden="true">&raquo;&raquo;</span>
         </a>
     </li>

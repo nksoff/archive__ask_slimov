@@ -16,7 +16,7 @@ from ask_slimov.decorators import need_login, need_login_ajax
 def questions_new(request):
     questions = Question.objects.list_new()
 
-    pagination = helpers.paginate(questions, request)
+    pagination = helpers.paginate(questions, request, key='question')
     return render(request, 'questions_list.html',
             {
                 'questions': pagination,
@@ -28,7 +28,7 @@ def questions_new(request):
 def questions_hot(request):
     questions = Question.objects.list_hot()
 
-    pagination = helpers.paginate(questions, request)
+    pagination = helpers.paginate(questions, request, key='question')
     return render(request, 'questions_list.html',
             {
                 'questions': pagination,
@@ -45,7 +45,7 @@ def questions_tag(request, tag):
     
     questions = Question.objects.list_tag(tag)
 
-    pagination = helpers.paginate(questions, request)
+    pagination = helpers.paginate(questions, request, key='question')
     return render(request, 'questions_list.html',
             {
                 'questions': pagination,
