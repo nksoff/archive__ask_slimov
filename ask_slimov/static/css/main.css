@@ -7158,6 +7158,120 @@ a.ask-tags-tag:focus {
 .ask-answer-correct {
   text-align: right;
 }
+.ask-answer-button-incorrect {
+  color: #333333;
+  background-color: #ffffff;
+  border-color: #cccccc;
+}
+.ask-answer-button-incorrect:focus,
+.ask-answer-button-incorrect.focus {
+  color: #333333;
+  background-color: #e6e6e6;
+  border-color: #8c8c8c;
+}
+.ask-answer-button-incorrect:hover {
+  color: #333333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+.ask-answer-button-incorrect:active,
+.ask-answer-button-incorrect.active,
+.open > .dropdown-toggle.ask-answer-button-incorrect {
+  color: #333333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+.ask-answer-button-incorrect:active:hover,
+.ask-answer-button-incorrect.active:hover,
+.open > .dropdown-toggle.ask-answer-button-incorrect:hover,
+.ask-answer-button-incorrect:active:focus,
+.ask-answer-button-incorrect.active:focus,
+.open > .dropdown-toggle.ask-answer-button-incorrect:focus,
+.ask-answer-button-incorrect:active.focus,
+.ask-answer-button-incorrect.active.focus,
+.open > .dropdown-toggle.ask-answer-button-incorrect.focus {
+  color: #333333;
+  background-color: #d4d4d4;
+  border-color: #8c8c8c;
+}
+.ask-answer-button-incorrect:active,
+.ask-answer-button-incorrect.active,
+.open > .dropdown-toggle.ask-answer-button-incorrect {
+  background-image: none;
+}
+.ask-answer-button-incorrect.disabled:hover,
+.ask-answer-button-incorrect[disabled]:hover,
+fieldset[disabled] .ask-answer-button-incorrect:hover,
+.ask-answer-button-incorrect.disabled:focus,
+.ask-answer-button-incorrect[disabled]:focus,
+fieldset[disabled] .ask-answer-button-incorrect:focus,
+.ask-answer-button-incorrect.disabled.focus,
+.ask-answer-button-incorrect[disabled].focus,
+fieldset[disabled] .ask-answer-button-incorrect.focus {
+  background-color: #ffffff;
+  border-color: #cccccc;
+}
+.ask-answer-button-incorrect .badge {
+  color: #ffffff;
+  background-color: #333333;
+}
+.ask-answer-button-correct {
+  color: #ffffff;
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}
+.ask-answer-button-correct:focus,
+.ask-answer-button-correct.focus {
+  color: #ffffff;
+  background-color: #449d44;
+  border-color: #255625;
+}
+.ask-answer-button-correct:hover {
+  color: #ffffff;
+  background-color: #449d44;
+  border-color: #398439;
+}
+.ask-answer-button-correct:active,
+.ask-answer-button-correct.active,
+.open > .dropdown-toggle.ask-answer-button-correct {
+  color: #ffffff;
+  background-color: #449d44;
+  border-color: #398439;
+}
+.ask-answer-button-correct:active:hover,
+.ask-answer-button-correct.active:hover,
+.open > .dropdown-toggle.ask-answer-button-correct:hover,
+.ask-answer-button-correct:active:focus,
+.ask-answer-button-correct.active:focus,
+.open > .dropdown-toggle.ask-answer-button-correct:focus,
+.ask-answer-button-correct:active.focus,
+.ask-answer-button-correct.active.focus,
+.open > .dropdown-toggle.ask-answer-button-correct.focus {
+  color: #ffffff;
+  background-color: #398439;
+  border-color: #255625;
+}
+.ask-answer-button-correct:active,
+.ask-answer-button-correct.active,
+.open > .dropdown-toggle.ask-answer-button-correct {
+  background-image: none;
+}
+.ask-answer-button-correct.disabled:hover,
+.ask-answer-button-correct[disabled]:hover,
+fieldset[disabled] .ask-answer-button-correct:hover,
+.ask-answer-button-correct.disabled:focus,
+.ask-answer-button-correct[disabled]:focus,
+fieldset[disabled] .ask-answer-button-correct:focus,
+.ask-answer-button-correct.disabled.focus,
+.ask-answer-button-correct[disabled].focus,
+fieldset[disabled] .ask-answer-button-correct.focus {
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}
+.ask-answer-button-correct .badge {
+  color: #5cb85c;
+  background-color: #ffffff;
+}
 .ask-answer-form-title {
   font-family: inherit;
   font-weight: 500;

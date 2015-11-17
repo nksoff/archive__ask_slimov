@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -127,6 +128,14 @@ class Question(models.Model):
 
     objects = QuestionManager()
 
+    # current correct answer
+    def get_correct_answer(self):
+        try:
+            ans = Answer.objects.get(question=self, correct=True)
+        except:
+            ans = None
+        return ans
+
     def __unicode__(self):
         return "[" + str(self.id) + "] " + self.title
 
@@ -146,7 +155,28 @@ class QuestionLikeManager(models.Manager):
     def sum_for_question(self, question):
         return self.has_question(question).aggregate(sum=Sum('value'))['sum']
 
-    # adds a like if not exists
+    # adds a like or raises exception
+    def add(self, author, question, value):
+        if author.id == question.author.id:
+            raise QuestionLike.OwnLike
+
+        try:
+            obj = self.get(
+                    author=author,
+                    question=question
+                    )
+        except QuestionLike.DoesNotExist:
+            obj = self.create(
+                    author=author,
+                    question=question,
+                    value=value
+                    )
+            question.likes = self.sum_for_question(question)
+            question.save()
+        else:
+            raise QuestionLike.AlreadyLike
+
+    # add like if not exists
     def add_or_update(self, author, question, value):
         obj, new = self.update_or_create(
                 author=author,
@@ -158,11 +188,20 @@ class QuestionLikeManager(models.Manager):
         question.save()
         return new
 
-
 #
 # question-like
 #
 class QuestionLike(models.Model):
+    # like for own question is not allowed
+    class OwnLike(Exception):
+        def __init__(self):
+            super(QuestionLike.OwnLike, self).__init__(u'Вы не можете голосовать за свой вопрос')
+
+    # already liked
+    class AlreadyLike(Exception):
+        def __init__(self):
+            super(QuestionLike.AlreadyLike, self).__init__(u'Вы уже голосовали за этот вопрос')
+
     UP = 1
     DOWN = -1
 
@@ -218,11 +257,27 @@ class Answer(models.Model):
 
     objects = AnswerManager()
 
+    # makes this answer correct
+    def set_correct(self):
+        q = self.question
+        current = q.get_correct_answer()
+
+        if current is not None:
+            current.set_incorrect()
+
+        self.correct = True
+        self.save()
+
+    # makes this answer incorrect
+    def set_incorrect(self):
+        self.correct = False
+        self.save()
+
     def __unicode__(self):
         return "[" + str(self.id) + "] " + self.text
 
     class Meta:
-        ordering = ['-correct', '-likes', '-date']
+        ordering = ['-correct', '-date', '-likes']
 
 
 #
@@ -236,6 +291,27 @@ class AnswerLikeManager(models.Manager):
     # returns likes count (sum) for an answer
     def sum_for_answer(self, answer):
         return self.has_answer(answer).aggregate(sum=Sum('value'))['sum']
+
+    # adds a like or raises exception
+    def add(self, author, answer, value):
+        if author.id == answer.author.id:
+            raise AnswerLike.OwnLike
+
+        try:
+            obj = self.get(
+                    author=author,
+                    answer=answer
+                    )
+        except AnswerLike.DoesNotExist:
+            obj = self.create(
+                    author=author,
+                    answer=answer,
+                    value=value
+                    )
+            answer.likes = self.sum_for_answer(answer)
+            answer.save()
+        else:
+            raise AnswerLike.AlreadyLike
 
     # adds a like if not exists
     def add_or_update(self, author, answer, value):
@@ -254,6 +330,19 @@ class AnswerLikeManager(models.Manager):
 # answer-like
 #
 class AnswerLike(models.Model):
+    # like for own answer is not allowed
+    class OwnLike(Exception):
+        def __init__(self):
+            super(AnswerLike.OwnLike, self).__init__(u'Вы не можете голосовать за свой ответ')
+
+    # already liked
+    class AlreadyLike(Exception):
+        def __init__(self):
+            super(AnswerLike.AlreadyLike, self).__init__(u'Вы уже голосовали за этот ответ')
+
+    UP = 1
+    DOWN = -1
+
     answer = models.ForeignKey(Answer)
     author = models.ForeignKey(User)
     value = models.SmallIntegerField(default=1)

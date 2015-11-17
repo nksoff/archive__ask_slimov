@@ -15,9 +15,9 @@
         </div>
         <div class="ask-question-options">
             <div class="ask-question-vote">
-                <a class="btn btn-xs btn-danger ask-question-vote-down"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                <span class="ask-question-vote-count">{{ question.likes }}</span>
-                <a class="btn btn-xs btn-success ask-question-vote-up"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                <a class="btn btn-xs btn-danger ask-question-vote-down" data-question-like-down="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                <span class="ask-question-vote-count" data-question-like-count="{{ question.id }}">{{ question.likes }}</span>
+                <a class="btn btn-xs btn-success ask-question-vote-up" data-question-like-up="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
             </div>
             <div class="ask-tags ask-question-tags">
                 {% for tag in question.tags.all %}
@@ -40,12 +40,12 @@
                 </div>
                 <div class="ask-answer-options">
                     <div class="ask-answer-vote">
-                        <a class="btn btn-xs btn-danger ask-answer-vote-down"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                        <span class="ask-answer-vote-count">{{ answer.likes }}</span>
-                        <a class="btn btn-xs btn-success ask-answer-vote-up"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                        <a class="btn btn-xs btn-danger ask-answer-vote-down" data-answer-like-down="{{ answer.id }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                        <span class="ask-answer-vote-count" data-answer-like-count="{{ answer.id }}">{{ answer.likes }}</span>
+                        <a class="btn btn-xs btn-success ask-answer-vote-up" data-answer-like-up="{{ answer.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
                     </div>
                     <div class="ask-answer-correct">
-                        <a class="btn btn-large {% if answer.correct %}btn-success{% else %}btn-default{% endif %}" {% if question.author.id != request.user.id %}disabled="disabled"{% endif %}><span class="glyphicon glyphicon-ok"></span> Правильный</a>
+                        <a class="btn btn-large {% if answer.correct %}ask-answer-button-correct{% else %}ask-answer-button-incorrect{% endif %}" {% if question.author.id != request.user.id %}disabled="disabled"{% endif %} data-answer-correct="{{ answer.id}}"><span class="glyphicon glyphicon-ok"></span> Правильный</a>
                     </div>
                 </div>
             </div>

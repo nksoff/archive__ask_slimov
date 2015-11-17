@@ -2,7 +2,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf.urls.static import static
 
-from ask_slimov import views, settings
+from ask_slimov import views, settings, urls_ajax
 
 urlpatterns = [
     url(r'^$',                          views.questions_new,        name = 'index'),
@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^ask/?$',                     views.form_question_new,    name = 'ask'),
     url(r'^profile/edit/?$',            views.form_profile_edit,    name = 'profile_edit'),
     url(r'^admin/',                     include(admin.site.urls)),
+    url(r'^ajax/',                      include(urls_ajax)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

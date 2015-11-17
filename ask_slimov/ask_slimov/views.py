@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
+from django.views.decorators.http import require_POST
 
 from ask_slimov import helpers
-from ask_slimov.models import Question, Answer, QuestionLike, Tag
+from ask_slimov.models import Question, Answer, QuestionLike, AnswerLike, Tag
 from ask_slimov.forms import LoginForm, SignupForm, ProfileEditForm, AnswerForm, QuestionForm
-from ask_slimov.decorators import need_login
+from ask_slimov.decorators import need_login, need_login_ajax
 
 from django.contrib import auth
 from django.forms.models import model_to_dict
@@ -158,3 +159,64 @@ def form_question_new(request):
     return render(request, 'form_question_new.html', {
         'form': form,
         })
+
+
+# ajax question like
+@need_login_ajax
+def ajax_question_like(request, id):
+    try:
+        q = Question.objects.get(pk=id)
+    except Question.DoesNotExist:
+        return helpers.HttpResponseAjaxError(code=u'no_question', message=u'Такого вопроса нет')
+
+    value = int(request.POST.get('value', QuestionLike.UP))
+
+    if value != QuestionLike.UP and value != QuestionLike.DOWN:
+        value = QuestionLike.UP
+
+    try:
+        QuestionLike.objects.add(author=request.user, question=q, value=value)
+    except QuestionLike.AlreadyLike as e1:
+        return helpers.HttpResponseAjaxError(code=u'already_like', message=e1.message)
+    except QuestionLike.OwnLike as e2:
+        return helpers.HttpResponseAjaxError(code=u'own_like', message=e2.message)
+
+    q = Question.objects.get(pk=id)
+    return helpers.HttpResponseAjax(likes=q.likes, question_id=q.id)
+
+
+# ajax answer like
+@need_login_ajax
+@require_POST
+def ajax_answer_like(request, id):
+    try:
+        ans = Answer.objects.get(pk=id)
+    except Answer.DoesNotExist:
+        return helpers.HttpResponseAjaxError(code=u'no_answer', message=u'Такого ответа нет')
+
+    value = int(request.POST.get('value', AnswerLike.UP))
+
+    if value != AnswerLike.UP and value != AnswerLike.DOWN:
+        value = AnswerLike.UP
+
+    try:
+        AnswerLike.objects.add(author=request.user, answer=ans, value=value)
+    except AnswerLike.AlreadyLike as e1:
+        return helpers.HttpResponseAjaxError(code=u'already_like', message=e1.message)
+    except AnswerLike.OwnLike as e2:
+        return helpers.HttpResponseAjaxError(code=u'own_like', message=e2.message)
+
+    ans = Answer.objects.get(pk=id)
+    return helpers.HttpResponseAjax(likes=ans.likes, answer_id=ans.id)
+
+
+# ajax answer correct
+@need_login_ajax
+@require_POST
+def ajax_answer_correct(request, id):
+    try:
+        ans = Answer.objects.get(pk=id)
+        ans.set_correct()
+        return helpers.HttpResponseAjax(answer_id=ans.id)
+    except:
+        return helpers.HttpResponseAjaxError(code=u'no_answer', message=u'Такого ответа нет')
