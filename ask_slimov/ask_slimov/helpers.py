@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 import json
 
+
 # pagination
 def paginate(objects, request):
     from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -17,7 +18,8 @@ def paginate(objects, request):
 
     return result
 
-# reponse ajax
+
+# response ajax
 class HttpResponseAjax(HttpResponse):
     def __init__(self, status='ok', **kwargs):
         kwargs['status'] = status
@@ -25,6 +27,7 @@ class HttpResponseAjax(HttpResponse):
                 content = json.dumps(kwargs),
                 content_type = 'application/json',
                 )
+
 
 # response ajax with error
 class HttpResponseAjaxError(HttpResponseAjax):

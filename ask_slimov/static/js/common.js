@@ -91,23 +91,23 @@
     };
 
     $(document).ready(function() {
-        $('[data-question-like-down]').on('click', function() {
+        $('[data-question-like-down]:not([disabled])').on('click', function() {
             // dislike question
             App.like_question($(this).data('question-like-down'), -1);
         });
-        $('[data-question-like-up]').on('click', function() {
+        $('[data-question-like-up]:not([disabled])').on('click', function() {
             // like question
             App.like_question($(this).data('question-like-up'), 1);
         });
-        $('[data-answer-like-down]').on('click', function() {
+        $('[data-answer-like-down]:not([disabled])').on('click', function() {
             // dislike answer
             App.like_answer($(this).data('answer-like-down'), -1);
         });
-        $('[data-answer-like-up]').on('click', function() {
+        $('[data-answer-like-up]:not([disabled])').on('click', function() {
             // like answer
             App.like_answer($(this).data('answer-like-up'), 1);
         });
-        $('[data-answer-correct]').on('click', function() {
+        $('[data-answer-correct]:not([disabled])').on('click', function() {
             // make answer correct
             App.correct_answer($(this).data('answer-correct'));
         });

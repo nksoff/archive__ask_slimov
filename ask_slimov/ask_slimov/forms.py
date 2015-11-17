@@ -10,6 +10,7 @@ from ask_slimov.models import Profile, Question, Tag
 import urllib
 from django.core.files import File
 
+
 #
 # login form
 #
@@ -39,6 +40,7 @@ class LoginForm(forms.Form):
                 raise forms.ValidationError(u'Данный пользователь не активен')
         else:
             raise forms.ValidationError(u'Указан неверный логин или пароль')
+
 
 #
 # signup form
@@ -123,6 +125,7 @@ class SignupForm(forms.Form):
 
         return authenticate(username=u.username, password=password)
 
+
 #
 # profile edit form
 #
@@ -199,8 +202,9 @@ class AnswerForm(forms.Form):
         data = self.cleaned_data
         return question.answer_set.create(text=data.get('text'), author=author)
 
+
 #
-# question form
+# question add form
 #
 class QuestionForm(forms.Form):
     title = forms.CharField(

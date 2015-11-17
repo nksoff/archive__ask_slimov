@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+from django.contrib import auth
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
+from django.forms.models import model_to_dict
+from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_POST
 
 from ask_slimov import helpers
@@ -8,9 +11,6 @@ from ask_slimov.models import Question, Answer, QuestionLike, AnswerLike, Tag
 from ask_slimov.forms import LoginForm, SignupForm, ProfileEditForm, AnswerForm, QuestionForm
 from ask_slimov.decorators import need_login, need_login_ajax
 
-from django.contrib import auth
-from django.forms.models import model_to_dict
-from django.core.urlresolvers import reverse
 
 # new questions
 def questions_new(request):
@@ -20,8 +20,7 @@ def questions_new(request):
     return render(request, 'questions_list.html',
             {
                 'questions': pagination,
-                'title': 'Новые вопросы',
-                'key': 'new',
+                'title': 'Новые вопросы', 'key': 'new',
             })
 
 
@@ -33,8 +32,7 @@ def questions_hot(request):
     return render(request, 'questions_list.html',
             {
                 'questions': pagination,
-                'title': 'Лучшие вопросы',
-                'key': 'hot',
+                'title': 'Лучшие вопросы', 'key': 'hot',
             })
 
 
@@ -128,7 +126,7 @@ def form_signup(request):
 @need_login
 def form_profile_edit(request):
     if request.method == "POST":
-        form = ProfileEditForm(request.POST)
+        form = ProfileEditForm(request.POST, request.FILES)
         if form.is_valid():
             form.save(request.user)
             return HttpResponseRedirect('')
@@ -141,7 +139,6 @@ def form_profile_edit(request):
     return render(request, 'form_profile_edit.html', {
             'form': form,
             'u': request.user,
-            'username': request.user.username,
         })
 
 
@@ -166,23 +163,18 @@ def form_question_new(request):
 def ajax_question_like(request, id):
     try:
         q = Question.objects.get(pk=id)
+        value = int(request.POST.get('value', QuestionLike.UP))
+        if value != QuestionLike.UP and value != QuestionLike.DOWN:
+            value = QuestionLike.UP
+        QuestionLike.objects.add(author=request.user, question=q, value=value)
+        q = Question.objects.get(pk=id)
+        return helpers.HttpResponseAjax(likes=q.likes, question_id=q.id)
     except Question.DoesNotExist:
         return helpers.HttpResponseAjaxError(code=u'no_question', message=u'Такого вопроса нет')
-
-    value = int(request.POST.get('value', QuestionLike.UP))
-
-    if value != QuestionLike.UP and value != QuestionLike.DOWN:
-        value = QuestionLike.UP
-
-    try:
-        QuestionLike.objects.add(author=request.user, question=q, value=value)
     except QuestionLike.AlreadyLike as e1:
         return helpers.HttpResponseAjaxError(code=u'already_like', message=e1.message)
     except QuestionLike.OwnLike as e2:
         return helpers.HttpResponseAjaxError(code=u'own_like', message=e2.message)
-
-    q = Question.objects.get(pk=id)
-    return helpers.HttpResponseAjax(likes=q.likes, question_id=q.id)
 
 
 # ajax answer like
@@ -191,23 +183,18 @@ def ajax_question_like(request, id):
 def ajax_answer_like(request, id):
     try:
         ans = Answer.objects.get(pk=id)
+        value = int(request.POST.get('value', AnswerLike.UP))
+        if value != AnswerLike.UP and value != AnswerLike.DOWN:
+            value = AnswerLike.UP
+        AnswerLike.objects.add(author=request.user, answer=ans, value=value)
+        ans = Answer.objects.get(pk=id)
+        return helpers.HttpResponseAjax(likes=ans.likes, answer_id=ans.id)
     except Answer.DoesNotExist:
         return helpers.HttpResponseAjaxError(code=u'no_answer', message=u'Такого ответа нет')
-
-    value = int(request.POST.get('value', AnswerLike.UP))
-
-    if value != AnswerLike.UP and value != AnswerLike.DOWN:
-        value = AnswerLike.UP
-
-    try:
-        AnswerLike.objects.add(author=request.user, answer=ans, value=value)
     except AnswerLike.AlreadyLike as e1:
         return helpers.HttpResponseAjaxError(code=u'already_like', message=e1.message)
     except AnswerLike.OwnLike as e2:
         return helpers.HttpResponseAjaxError(code=u'own_like', message=e2.message)
-
-    ans = Answer.objects.get(pk=id)
-    return helpers.HttpResponseAjax(likes=ans.likes, answer_id=ans.id)
 
 
 # ajax answer correct
@@ -216,7 +203,9 @@ def ajax_answer_like(request, id):
 def ajax_answer_correct(request, id):
     try:
         ans = Answer.objects.get(pk=id)
-        ans.set_correct()
+        ans.set_correct(request.user)
         return helpers.HttpResponseAjax(answer_id=ans.id)
-    except:
+    except Answer.DoesNotExist:
         return helpers.HttpResponseAjaxError(code=u'no_answer', message=u'Такого ответа нет')
+    except Exception as e:
+        return helpers.HttpResponseAjaxError(code=u'error', message=e.message)

@@ -23,9 +23,9 @@
         </div>
         <div class="ask-question-options">
             <div class="ask-question-vote">
-                <a class="btn btn-xs btn-danger ask-question-vote-down" data-question-like-down="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                <a class="btn btn-xs btn-danger ask-question-vote-down" {%if not request.user.is_authenticated %}disabled="disabled"{% endif %} data-question-like-down="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
                 <span class="ask-question-vote-count" data-question-like-count="{{ question.id }}">{{ question.likes }}</span>
-                <a class="btn btn-xs btn-success ask-question-vote-up" data-question-like-up="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                <a class="btn btn-xs btn-success ask-question-vote-up" {%if not request.user.is_authenticated %}disabled="disabled"{% endif %} data-question-like-up="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
             </div>
             <div class="ask-question-answer-link">
                 <a href="{% url 'question' question.id %}">Ответы ({{ question.answers }})</a>

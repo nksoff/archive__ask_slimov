@@ -7,6 +7,7 @@ from django.db.models import Count, Sum
 
 from random import choice
 
+
 # user profile
 class Profile(models.Model):
     user = models.OneToOneField(User)
@@ -15,6 +16,7 @@ class Profile(models.Model):
 
     def __unicode__(self):
         return "[" + str(self.user.id) + "] " + self.user.username
+
 
 #
 # tags manager
@@ -39,6 +41,7 @@ class TagManager(models.Manager):
         except Tag.DoesNotExist:
             tag = self.create(title=title, color=choice(Tag.COLORS)[0])
         return tag
+
 
 #
 # tag
@@ -89,6 +92,7 @@ class QuestionQuerySet(models.QuerySet):
     def with_author(self):
         return self.select_related('author').select_related('author__profile')
 
+
 #
 # questions manager
 #
@@ -114,6 +118,7 @@ class QuestionManager(models.Manager):
     def get_single(self, id):
         res = self.get_queryset()
         return res.with_answers().get(pk=id)
+
 
 #
 # question
@@ -188,6 +193,7 @@ class QuestionLikeManager(models.Manager):
         question.save()
         return new
 
+
 #
 # question-like
 #
@@ -235,6 +241,7 @@ class AnswerQuerySet(models.QuerySet):
     def with_question(self):
         return self.select_related('question')
 
+
 #
 # answers manager
 #
@@ -243,6 +250,7 @@ class AnswerManager(models.Manager):
     def get_queryset(self):
         res = QuestionQuerySet(self.model, using=self._db)
         return res.with_author()
+
 
 #
 # answer
@@ -258,8 +266,12 @@ class Answer(models.Model):
     objects = AnswerManager()
 
     # makes this answer correct
-    def set_correct(self):
+    def set_correct(self, user=None):
         q = self.question
+        
+        if user is not None and q.author.id != user.id:
+            raise Exception(u'Вы не являетесь автором этого вопроса')
+
         current = q.get_correct_answer()
 
         if current is not None:
