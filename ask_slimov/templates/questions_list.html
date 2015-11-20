@@ -14,10 +14,10 @@
             <div class="ask-user-avatar-container">
                 {% load static %}
                 <img src="{{ question.author.profile.avatar.url }}" class="user-avatar" alt="{{ question.author.last_name }} {{ question.author.first_name }}" />
-                <span class="small">{{ question.author.last_name }} {{ question.author.first_name }}</span>
+                <div class="small">{{ question.author.last_name }} {{ question.author.first_name }}</div>
             </div>
             <div class="ask-question-data">
-                <div class="ask-question-title"><a href="{% url 'question' question.id %}">{{ question.title }}</a></div>
+                <div class="ask-question-title"><a href="{{ question.get_url }}">{{ question.title }}</a></div>
                 <p class="ask-question-text">{{ question.text }}</p>
             </div>
         </div>
@@ -28,11 +28,11 @@
                 <a class="btn btn-xs btn-success ask-question-vote-up" {%if not request.user.is_authenticated %}disabled="disabled"{% endif %} data-question-like-up="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
             </div>
             <div class="ask-question-answer-link">
-                <a href="{% url 'question' question.id %}">Ответы ({{ question.answers }})</a>
+                <a href="{{ question.get_url }}">Ответы ({{ question.answers }})</a>
             </div>
             <div class="ask-tags ask-question-tags">
                 {% for tag in question.tags.all %}
-                <a href="{% url 'tag' tag.title %}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
+                <a href="{{ tag.get_url }}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
                 {% endfor %}
             </div>
         </div>

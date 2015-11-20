@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.db.models import Count, Sum
 
-from random import choice
+from django.core.urlresolvers import reverse
 
 
 # user profile
@@ -64,6 +64,9 @@ class Tag(models.Model):
     color = models.CharField(max_length=2, choices=COLORS, default=BLACK)
 
     objects = TagManager()
+
+    def get_url(self):
+        return reverse('tag', kwargs={'tag': self.title})
 
     def __unicode__(self):
         return "[" + str(self.id) + "] " + self.title
@@ -132,6 +135,9 @@ class Question(models.Model):
     likes = models.IntegerField(default=0)
 
     objects = QuestionManager()
+
+    def get_url(self):
+        return reverse('question', kwargs={'id': self.id})
 
     # current correct answer
     def get_correct_answer(self):

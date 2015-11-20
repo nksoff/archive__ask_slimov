@@ -7,7 +7,7 @@
         <div class="ask-question-info">
             <div class="ask-user-avatar-container">
                 <img src="{{ question.author.profile.avatar.url }}" class="user-avatar" title="{{ question.author.last_name }} {{ question.author.first_name }}" />
-                <span class="small">{{ question.author.last_name }} {{ question.author.first_name }}</span>
+                <div class="small">{{ question.author.last_name }} {{ question.author.first_name }}</div>
             </div>
             <div class="ask-question-data">
                 <div class="ask-question-title-big">{{ question.title }}</div>
@@ -21,7 +21,7 @@
             </div>
             <div class="ask-tags ask-question-tags">
                 {% for tag in question.tags.all %}
-                <a href="{% url 'tag' tag.title %}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
+                <a href="{{ tag.get_url }}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
                 {% endfor %}
             </div>
         </div>
@@ -32,7 +32,7 @@
                 <div class="ask-answer-info">
                     <div class="ask-user-avatar-container">
                         <img src="{{ answer.author.profile.avatar.url }}" class="user-avatar" title="{{ answer.author.last_name }} {{ answer.author.first_name }}" />
-                        <span class="small">{{ answer.author.last_name }} {{ answer.author.first_name }}</span>
+                        <div class="small">{{ answer.author.last_name }} {{ answer.author.first_name }}</div>
                     </div>
                     <div class="ask-answer-data">
                         <p class="ask-answer-text">{{ answer.text }}</p>
