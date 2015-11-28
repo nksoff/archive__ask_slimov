@@ -1,3 +1,4 @@
+var App = {};
 (function($){
     // ajax csrf
     function getCookie(name) {
@@ -27,12 +28,19 @@
         }
     });
 
-    var App = {
+    App = {
         on_error: function(msg) {
             if(alertify == undefined) {
                 return alert(msg);
             }
             return alertify.error(msg);
+        },
+
+        on_success: function(msg) {
+            if(alertify == undefined) {
+                return alert(msg);
+            }
+            return alertify.success(msg);
         },
 
         like_question: function(question_id, value) {
@@ -86,6 +94,27 @@
                     .addClass('ask-answer-button-correct');
             }).error(function() {
                 App.on_error('Не удалось пометить ответ правильным');
+            });
+        },
+
+        comet: function(channel) {
+            var that = this;
+            var self = function() {
+                return that.comet(channel);
+            };
+
+            $.ajax({
+                type: 'GET',
+                url: '/comet-listen/' + channel
+            }).success(function(data) {
+                if(data != undefined && data.messages != undefined) {
+                    for(var i in data.messages) {
+                        that.on_success(data.messages[i]);
+                    }
+                }
+                self();
+            }).error(function() {
+                setTimeout(self, 10000);
             });
         }
     };

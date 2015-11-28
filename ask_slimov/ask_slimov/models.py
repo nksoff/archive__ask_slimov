@@ -7,6 +7,8 @@ from django.db.models import Count, Sum
 
 from django.core.urlresolvers import reverse
 
+from ask_slimov import helpers
+
 
 # user profile
 class Profile(models.Model):
@@ -257,6 +259,19 @@ class AnswerManager(models.Manager):
         res = QuestionQuerySet(self.model, using=self._db)
         return res.with_author()
 
+    # create
+    def create(self, **kwargs):
+        ans = super(AnswerManager, self).create(**kwargs);
+        
+        text = ans.text[:100]
+        if len(ans.text) > 100:
+            text += '...'
+
+        helpers.comet_send_message(
+                helpers.comet_channel_id_question(ans.question),
+                u'Новый ответ (' + ans.author.last_name + ' ' + ans.author.first_name + '): ' + text 
+                )
+        return ans
 
 #
 # answer

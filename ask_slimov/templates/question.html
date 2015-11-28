@@ -71,4 +71,10 @@
         </div>
         {% endif %}
     </div>
+
+    <script>
+    $(document).ready(function() {
+        App.comet('q{{ question.id }}');
+    });
+    </script>
 {% endblock %}

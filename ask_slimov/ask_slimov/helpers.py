@@ -41,3 +41,17 @@ class HttpResponseAjaxError(HttpResponseAjax):
         super(HttpResponseAjaxError, self).__init__(
                 status = 'error', code = code, message = message
                 )
+
+# send comet messages
+import urllib2
+import json
+def comet_send_message(channel, text):
+    url = 'http://0.0.0.0:8083/comet-publish/?id=' + channel
+    body = json.dumps({'messages': [ text ]})
+    request = urllib2.Request(url, body, {})
+    response = urllib2.urlopen(request)
+    return response
+
+# a channel id for a question
+def comet_channel_id_question(q):
+    return 'q' + str(q.id)
