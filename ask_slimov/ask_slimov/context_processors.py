@@ -1,16 +1,16 @@
 from ask_slimov.models import Tag
 from django.contrib.auth.models import User
-
+from ask_slimov.models import ProjectCache
 
 # popular tags
 def popular_tags(request):
-    tags = Tag.objects.order_by_question_count().all()[:12]
+    tags = ProjectCache.get_popular_tags()
 
     return {'popular_tags': tags}
 
 
 # best users
 def best_users(request):
-    users = User.objects.all()[0:10] 
+    users = ProjectCache.get_best_users()
 
     return {'best_users': users}

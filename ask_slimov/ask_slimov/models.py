@@ -2,13 +2,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+import datetime
 from django.utils import timezone
 from django.db.models import Count, Sum
 
 from django.core.urlresolvers import reverse
 
 from ask_slimov import helpers
-
+from django.core.cache import cache
 
 # user profile
 class Profile(models.Model):
@@ -18,7 +19,6 @@ class Profile(models.Model):
 
     def __unicode__(self):
         return "[" + str(self.user.id) + "] " + self.user.username
-
 
 #
 # tags manager
@@ -43,6 +43,10 @@ class TagManager(models.Manager):
         except Tag.DoesNotExist:
             tag = self.create(title=title, color=choice(Tag.COLORS)[0])
         return tag
+
+    # counts most popular tags
+    def count_popular(self):
+        return self.order_by_question_count().all()[:20]
 
 
 #
@@ -97,6 +101,14 @@ class QuestionQuerySet(models.QuerySet):
     def with_author(self):
         return self.select_related('author').select_related('author__profile')
 
+    # order by popularity
+    def order_by_popularity(self):
+        return self.order_by('-likes')
+
+    # filter by date
+    def with_date_greater(self, date):
+        return self.filter(date__gt=date)
+
 
 #
 # questions manager
@@ -123,6 +135,11 @@ class QuestionManager(models.Manager):
     def get_single(self, id):
         res = self.get_queryset()
         return res.with_answers().get(pk=id)
+
+    # best questions
+    def get_best(self):
+        week_ago = timezone.now() + datetime.timedelta(-7)
+        return self.get_queryset().order_by_popularity().with_date_greater(week_ago)
 
 
 #
@@ -249,6 +266,14 @@ class AnswerQuerySet(models.QuerySet):
     def with_question(self):
         return self.select_related('question')
 
+    # order by popularity
+    def order_by_popularity(self):
+        return self.order_by('-likes')
+
+    # filter by date
+    def with_date_greater(self, date):
+        return self.filter(date__gt=date)
+
 
 #
 # answers manager
@@ -256,7 +281,7 @@ class AnswerQuerySet(models.QuerySet):
 class AnswerManager(models.Manager):
     # custom query set
     def get_queryset(self):
-        res = QuestionQuerySet(self.model, using=self._db)
+        res = AnswerQuerySet(self.model, using=self._db)
         return res.with_author()
 
     # create
@@ -272,6 +297,11 @@ class AnswerManager(models.Manager):
                 u'Новый ответ (' + ans.author.last_name + ' ' + ans.author.first_name + '): ' + text 
                 )
         return ans
+
+    # best answers
+    def get_best(self):
+        week_ago = timezone.now() + datetime.timedelta(-7)
+        return self.get_queryset().order_by_popularity().with_date_greater(week_ago)
 
 #
 # answer
@@ -392,3 +422,52 @@ class AnswerLike(models.Model):
         
         s += " a" + str(self.answer_id)
         return s
+
+
+# caching
+class ProjectCache:
+
+    #
+    # popular tags
+    #
+    POPULAR_TAGS = 'tags_popular'
+
+    # get
+    @classmethod
+    def get_popular_tags(self):
+        return cache.get(ProjectCache.POPULAR_TAGS, [])
+
+    # update
+    @classmethod
+    def update_popular_tags(self):
+        popular = Tag.objects.count_popular()
+        cache.set(ProjectCache.POPULAR_TAGS, popular, 60*60*24)
+
+    #
+    # best users
+    #
+    BEST_USERS = 'users_best'
+
+    # get
+    @classmethod
+    def get_best_users(self):
+        return cache.get(ProjectCache.BEST_USERS, [])
+
+    # update
+    @classmethod
+    def update_best_users(self):
+        best_answers = Answer.objects.get_best()
+        best_questions = Question.objects.get_best()
+
+        users = {}
+        for i in best_answers:
+            users[i.author_id] = users.get(i.author_id, 0) + i.likes
+        for i in best_questions:
+            users[i.author_id] = users.get(i.author_id, 0) + i.likes
+
+        users = sorted(users, key=users.get)
+        users.reverse()
+
+        users = User.objects.filter(pk__in=users[:20])
+
+        cache.set(ProjectCache.BEST_USERS, users, 60*60*24)
