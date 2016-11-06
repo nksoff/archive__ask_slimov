@@ -11,6 +11,8 @@ from django.core.urlresolvers import reverse
 from ask_slimov import helpers
 from django.core.cache import cache
 
+from random import choice
+
 # user profile
 class Profile(models.Model):
     user = models.OneToOneField(User)

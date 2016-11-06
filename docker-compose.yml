@@ -23,6 +23,8 @@ services:
     expose:
       - 8000
     restart: always
+    links:
+      - db
   nginx:
     image: "stevecrozz/nginx-push-stream:master"
     volumes:
@@ -31,6 +33,8 @@ services:
     command: "/usr/local/nginx/sbin/nginx -c /etc/nginx/nginx.conf"
     ports:
       - 8001:8001
+    expose:
+      - 8001
+    restart: always
     links:
       - web
-    restart: always

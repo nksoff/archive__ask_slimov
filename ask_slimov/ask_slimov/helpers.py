@@ -46,7 +46,7 @@ class HttpResponseAjaxError(HttpResponseAjax):
 import urllib2
 import json
 def comet_send_message(channel, text):
-    url = 'http://0.0.0.0:8083/comet-publish/?id=' + channel
+    url = 'http://nginx:8001/comet-publish/?id=' + channel
     body = json.dumps({'messages': [ text ]})
     request = urllib2.Request(url, body, {})
     response = urllib2.urlopen(request)
