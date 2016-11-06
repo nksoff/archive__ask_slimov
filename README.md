@@ -3,7 +3,7 @@
 Technopark@mail.ru, 1 semester, Web-technologies project
 
 ```
-docker-compose up -d # just run
+docker-compose up -d # just run ( server on http://127.0.0.1:8001/ )
 docker-compose run web python ask_slimov/manage.py fake_users # generate some users
 docker-compose run web python ask_slimov/manage.py fake_questions # some questions
 docker-compose run web python ask_slimov/manage.py fake_answers # some answers
