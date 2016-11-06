@@ -86,6 +86,8 @@ DATABASES = {
         'NAME': 'ask_slimov',
         'USER': 'ask_slimov',
         'PASSWORD': 'ask_slimov',
+        'HOST': 'db',
+        'PORT': 3306,
     }
 }
 
