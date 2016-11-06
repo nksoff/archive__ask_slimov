@@ -1,0 +1,4 @@
+Django
+faker
+mysqlclient
+Pillow

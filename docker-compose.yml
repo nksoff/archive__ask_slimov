@@ -1,0 +1,23 @@
+version: '2'
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+      - "./mysql.cnf:/etc/mysql/conf.d/mysql.cnf"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ask_slimov
+      MYSQL_DATABASE: ask_slimov
+      MYSQL_USER: ask_slimov
+      MYSQL_PASSWORD: ask_slimov
+  web:
+    build: .
+    depends_on:
+      - db
+    command: bash -c 'python ask_slimov/manage.py createcachetable && python ask_slimov/manage.py makemigrations && python ask_slimov/manage.py migrate && python ask_slimov/manage.py runserver 0.0.0.0:8000'
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    restart: always

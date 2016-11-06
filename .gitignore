@@ -1,5 +1,6 @@
 # Project
 ask_slimov/uploads/*
+.data
 *.pyc
 *.log
 
