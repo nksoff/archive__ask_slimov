@@ -4,7 +4,7 @@ services:
     image: mysql:5.7
     volumes:
       - "./.data/db:/var/lib/mysql"
-      - "./mysql.cnf:/etc/mysql/conf.d/mysql.cnf"
+      - "./docker/mysql.cnf:/etc/mysql/conf.d/mysql.cnf"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ask_slimov
@@ -19,5 +19,18 @@ services:
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - 8000:8000
+    expose:
+      - 8000
+    restart: always
+  nginx:
+    image: "stevecrozz/nginx-push-stream:master"
+    volumes:
+      - ./docker/nginx:/etc/nginx
+      - ./ask_slimov:/code
+    command: "/usr/local/nginx/sbin/nginx -c /etc/nginx/nginx.conf"
+    ports:
+      - 8001:8001
+    links:
+      - web
     restart: always

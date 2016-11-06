@@ -1,2 +1,0 @@
-  0 0  *   *   *     cd /vagrant/ask_slimov && python manage.py cache_tags
-  0 0  *   *   *     cd /vagrant/ask_slimov && python manage.py cache_users
