@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
-{%block title %}Задать вопрос{% endblock %}
-{%block page_title %}Задать вопрос{% endblock %}
+{% block title %}Задать вопрос{% endblock %}
+{% block page_title %}Задать вопрос{% endblock %}
 
-{%block content %}
+{% block content %}
     {% for e in form.non_field_errors %}
         <div class="ask-ask-form-error">
             <div class="alert alert-danger" role="alert">
@@ -49,4 +49,22 @@
             </div>
         </form>
     </div>
+
+    <script>
+        $(function () {
+            $('.ask-ask-form form').submit(function () {
+                var $form = $(this);
+                var errorFields = [];
+                $form.find('input[type=text][name], textarea[name]').each(function(i, el) {
+                    if($(el).val().toLowerCase().indexOf('php') !== -1) {
+                        errorFields.push($(el).attr('name'));
+                    }
+                });
+                if(errorFields.length > 0) {
+                    alert('Вопросы про PHP запрещены.');
+                    return false;
+                }
+            });
+        });
+    </script>
 {% endblock %}
