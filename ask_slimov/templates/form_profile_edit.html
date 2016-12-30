@@ -25,7 +25,7 @@
                 <label for="{{ field.name }}" class="col-sm-3 control-label">{{ field.label }}</label>
                 <div class="col-sm-6">
                     {% if field.name == 'avatar' %}
-                        <img src="{{ u.profile.avatar.url }}" class="" />
+                        <img src="{{ u.profile.avatar.url }}" class="" style="max-width: 100%" />
                     {% endif %}
                     {{ field }}
                     {% if field.errors %} {% for e in field.errors %}{{ e }}{% endfor %}
