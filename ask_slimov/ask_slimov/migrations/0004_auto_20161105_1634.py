@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('ask_slimov', '0003_auto_20151115_1559'),
     ]

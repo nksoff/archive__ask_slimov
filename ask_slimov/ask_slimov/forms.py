@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponse, Http404
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django import forms
@@ -16,22 +15,23 @@ from django.core.files import File
 #
 class LoginForm(forms.Form):
     login = forms.CharField(
-            widget=forms.TextInput(
-                attrs={ 'class': 'form-control', 'placeholder': 'me', }
-                ),
-            max_length=30,
-            label=u'Логин'
-            )
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'me', }
+        ),
+        max_length=30,
+        label=u'Логин'
+    )
     password = forms.CharField(
-            widget=forms.PasswordInput(
-                attrs={ 'class': 'form-control', 'placeholder': '*******', }
-                ),
-            label=u'Пароль'
-            )
+        widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': '*******', }
+        ),
+        label=u'Пароль'
+    )
 
     def clean(self):
         data = self.cleaned_data
-        user = authenticate(username=data.get('login', ''), password=data.get('password', ''))
+        user = authenticate(username=data.get('login', ''),
+                            password=data.get('password', ''))
 
         if user is not None:
             if user.is_active:
@@ -47,37 +47,45 @@ class LoginForm(forms.Form):
 #
 class SignupForm(forms.Form):
     username = forms.CharField(
-            widget=forms.TextInput( attrs={ 'class': 'form-control', 'placeholder': 'me', }),
-            max_length=30, label=u'Логин'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': 'me', }),
+        max_length=30, label=u'Логин'
+    )
     first_name = forms.CharField(
-            widget=forms.TextInput( attrs={ 'class': 'form-control', 'placeholder': u'Иван', }),
-            max_length=30, label=u'Имя'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': u'Иван', }),
+        max_length=30, label=u'Имя'
+    )
     last_name = forms.CharField(
-            widget=forms.TextInput( attrs={ 'class': 'form-control', 'placeholder': u'Иванов', }),
-            max_length=30, label=u'Фамилия'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': u'Иванов', }),
+        max_length=30, label=u'Фамилия'
+    )
     email = forms.EmailField(
-            widget=forms.TextInput( attrs={ 'class': 'form-control', 'placeholder': 'me@gmail.com', }),
-            required = False, max_length=254, label=u'E-mail'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': 'me@gmail.com', }),
+        required=False, max_length=254, label=u'E-mail'
+    )
     password1 = forms.CharField(
-            widget=forms.PasswordInput( attrs={ 'class': 'form-control', 'placeholder': '*****' }),
-            min_length=6, label=u'Пароль'
-            )
+        widget=forms.PasswordInput(attrs={'class': 'form-control',
+                                          'placeholder': '*****'}),
+        min_length=6, label=u'Пароль'
+    )
     password2 = forms.CharField(
-            widget=forms.PasswordInput( attrs={ 'class': 'form-control', 'placeholder': '*****' }),
-            min_length=6, label=u'Повторите пароль'
-            )
+        widget=forms.PasswordInput(attrs={'class': 'form-control',
+                                          'placeholder': '*****'}),
+        min_length=6, label=u'Повторите пароль'
+    )
     info = forms.CharField(
-            widget=forms.TextInput( attrs={ 'class': 'form-control', 'placeholder': u'Молод и горяч', }),
-            required=False, label=u'Пара слов о себе'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': u'Молод и горяч', }),
+        required=False, label=u'Пара слов о себе'
+    )
     avatar = forms.FileField(
-            widget=forms.ClearableFileInput( attrs={ 'class': 'ask-signup-avatar-input', }),
-            required=False, label=u'Аватар'
-            )
+        widget=forms.ClearableFileInput(
+            attrs={'class': 'ask-signup-avatar-input', }),
+        required=False, label=u'Аватар'
+    )
 
     def clean_username(self):
         username = self.cleaned_data.get('username', '')
@@ -114,12 +122,15 @@ class SignupForm(forms.Form):
         up.info = data.get('info')
 
         if data.get('avatar') is None:
-            image_url = 'http://api.adorable.io/avatars/100/%s.png' % u.username
+            image_url = 'http://api.adorable.io/avatars/100/%s.png'\
+                        % u.username
             content = urllib.urlretrieve(image_url)
-            up.avatar.save('%s.png' % u.username, File(open(content[0])), save=True)
+            up.avatar.save('%s.png' % u.username, File(open(content[0])),
+                           save=True)
         else:
             avatar = data.get('avatar')
-            up.avatar.save('%s_%s' % (u.username, avatar.name), avatar, save=True)
+            up.avatar.save('%s_%s' % (u.username, avatar.name),
+                           avatar, save=True)
 
         up.save()
 
@@ -131,33 +142,40 @@ class SignupForm(forms.Form):
 #
 class ProfileEditForm(forms.Form):
     first_name = forms.CharField(
-            widget=forms.TextInput( attrs={ 'class': 'form-control', 'placeholder': 'Иван', }),
-            max_length=30, label=u'Имя'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': 'Иван', }),
+        max_length=30, label=u'Имя'
+    )
     last_name = forms.CharField(
-            widget=forms.TextInput( attrs={ 'class': 'form-control', 'placeholder': 'Иванов', }),
-            max_length=30, label=u'Фамилия'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': 'Иванов', }),
+        max_length=30, label=u'Фамилия'
+    )
     email = forms.EmailField(
-            widget=forms.TextInput( attrs={ 'class': 'form-control', 'placeholder': 'me@gmail.com', }),
-            required = False, max_length=254, label=u'E-mail'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': 'me@gmail.com', }),
+        required=False, max_length=254, label=u'E-mail'
+    )
     password1 = forms.CharField(
-            widget=forms.PasswordInput( attrs={ 'class': 'form-control', 'placeholder': '*****' }),
-            min_length=6, label=u'Пароль', required=False
-            )
+        widget=forms.PasswordInput(attrs={'class': 'form-control',
+                                          'placeholder': '*****'}),
+        min_length=6, label=u'Пароль', required=False
+    )
     password2 = forms.CharField(
-            widget=forms.PasswordInput( attrs={ 'class': 'form-control', 'placeholder': '*****' }),
-            min_length=6, label=u'Повторите пароль', required=False
-            )
+        widget=forms.PasswordInput(attrs={'class': 'form-control',
+                                          'placeholder': '*****'}),
+        min_length=6, label=u'Повторите пароль', required=False
+    )
     info = forms.CharField(
-            widget=forms.TextInput( attrs={ 'class': 'form-control', 'placeholder': 'Молод и горяч', }),
-            required=False, label=u'Пара слов о себе'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': 'Молод и горяч', }),
+        required=False, label=u'Пара слов о себе'
+    )
     avatar = forms.FileField(
-            widget=forms.ClearableFileInput( attrs={ 'class': 'ask-signup-avatar-input', }),
-            required=False, label=u'Аватар'
-            )
+        widget=forms.ClearableFileInput(
+            attrs={'class': 'ask-signup-avatar-input', }),
+        required=False, label=u'Аватар'
+    )
 
     def clean_password2(self):
         pass1 = self.cleaned_data.get('password1', '')
@@ -183,7 +201,8 @@ class ProfileEditForm(forms.Form):
 
         if data.get('avatar') is not None:
             avatar = data.get('avatar')
-            up.avatar.save('%s_%s' % (user.username, avatar.name), avatar, save=True)
+            up.avatar.save('%s_%s' % (user.username, avatar.name),
+                           avatar, save=True)
 
         up.save()
 
@@ -195,8 +214,10 @@ class ProfileEditForm(forms.Form):
 #
 class AnswerForm(forms.Form):
     text = forms.CharField(
-            widget=forms.Textarea(attrs={'class': 'form-control', 'rows': '3', 'placeholder': u'Введите ваш ответ', })
-            )
+        widget=forms.Textarea(attrs={'class': 'form-control',
+                                     'rows': '3',
+                                     'placeholder': u'Введите ваш ответ', })
+    )
 
     def save(self, question, author):
         data = self.cleaned_data
@@ -208,30 +229,35 @@ class AnswerForm(forms.Form):
 #
 class QuestionForm(forms.Form):
     title = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': u'Заголовок вопроса', }),
-            max_length=100,
-            label=u'Заголовок'
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': u'Заголовок вопроса', }),
+        max_length=100,
+        label=u'Заголовок'
+    )
     text = forms.CharField(
-            widget=forms.Textarea(attrs={'class': 'form-control', }),
-            label=u'Текст'
-            )
+        widget=forms.Textarea(attrs={'class': 'form-control', }),
+        label=u'Текст'
+    )
     tag1 = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': u'тег 1'}),
-            required=False
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': u'тег 1'}),
+        required=False
+    )
     tag2 = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': u'тег 2'}),
-            required=False
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': u'тег 2'}),
+        required=False
+    )
     tag3 = forms.CharField(
-            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': u'тег 3'}),
-            required=False
-            )
+        widget=forms.TextInput(attrs={'class': 'form-control',
+                                      'placeholder': u'тег 3'}),
+        required=False
+    )
 
     def save(self, author):
         data = self.cleaned_data
-        q = Question.objects.create(title=data.get('title'), text=data.get('text'), author=author)
+        q = Question.objects.create(title=data.get('title'),
+                                    text=data.get('text'), author=author)
         q.save()
 
         for tag_num in ['tag1', 'tag2', 'tag3']:

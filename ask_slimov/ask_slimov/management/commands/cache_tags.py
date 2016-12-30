@@ -1,6 +1,7 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from ask_slimov.models import ProjectCache
+
 
 class Command(BaseCommand):
     help = 'Caches popular tags'

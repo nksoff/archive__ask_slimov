@@ -1,6 +1,7 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from ask_slimov.models import ProjectCache
+
 
 class Command(BaseCommand):
     help = 'Caches best users'
@@ -8,4 +9,3 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         ProjectCache.update_best_users()
         self.stdout.write('Best users -- cached')
-

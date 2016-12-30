@@ -1,6 +1,5 @@
-from ask_slimov.models import Tag
-from django.contrib.auth.models import User
 from ask_slimov.models import ProjectCache
+
 
 # popular tags
 def popular_tags(request):

@@ -1,28 +1,29 @@
 # -*- coding: utf-8 -*-
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from ask_slimov.models import Question, Tag
 
-from random import choice, randint
-import os
+from random import choice
+
 
 class Command(BaseCommand):
     help = 'Creates fake tags'
 
     def add_arguments(self, parser):
         parser.add_argument('--number',
-                action='store',
-                dest='number',
-                default=3,
-                help='Number of tags for a question'
-        )
+                            action='store',
+                            dest='number',
+                            default=3,
+                            help='Number of tags for a question'
+                            )
 
     def handle(self, *args, **options):
         tags = [
-                'javascript', 'java', 'c#', 'php', 'android', 'jquery', 'python',
-                'html', 'css', 'c++', 'ios', 'mysql', 'objective-c', 'sql', 'asp.net',
-                'ruby-on-rails', 'iphone', 'angularjs', 'regexp'
-                ]
+            'javascript', 'java', 'c#', 'php', 'android', 'jquery', 'python',
+            'html', 'css', 'c++', 'ios', 'mysql', 'objective-c',
+            'sql', 'asp.net', 'ruby-on-rails', 'iphone',
+            'angularjs', 'regexp'
+        ]
 
         colors = Tag.COLORS
 

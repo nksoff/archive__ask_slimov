@@ -14,7 +14,8 @@ def need_login_ajax(func):
         if request.user.is_authenticated():
             return func(request, *args, **kwargs)
         return helpers.HttpResponseAjaxError(
-                code = "no_auth",
-                message = u'Требуется авторизация',
-                )
+            code="no_auth",
+            message=u'Требуется авторизация',
+        )
+
     return check

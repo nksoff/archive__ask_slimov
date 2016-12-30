@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 from django.contrib import auth
-from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.shortcuts import render, render_to_response
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_POST
 
 from ask_slimov import helpers
 from ask_slimov.models import Question, Answer, QuestionLike, AnswerLike, Tag
-from ask_slimov.forms import LoginForm, SignupForm, ProfileEditForm, AnswerForm, QuestionForm
+from ask_slimov.forms import LoginForm, SignupForm,\
+    ProfileEditForm, AnswerForm, QuestionForm
 from ask_slimov.decorators import need_login, need_login_ajax
 
 
@@ -18,10 +19,10 @@ def questions_new(request):
 
     pagination = helpers.paginate(questions, request, key='question')
     return render(request, 'questions_list.html',
-            {
-                'questions': pagination,
-                'title': 'Новые вопросы', 'key': 'new',
-            })
+                  {
+                      'questions': pagination,
+                      'title': 'Новые вопросы', 'key': 'new',
+                  })
 
 
 # hot questions
@@ -30,10 +31,10 @@ def questions_hot(request):
 
     pagination = helpers.paginate(questions, request, key='question')
     return render(request, 'questions_list.html',
-            {
-                'questions': pagination,
-                'title': 'Лучшие вопросы', 'key': 'hot',
-            })
+                  {
+                      'questions': pagination,
+                      'title': 'Лучшие вопросы', 'key': 'hot',
+                  })
 
 
 # questiong by tag
@@ -42,15 +43,15 @@ def questions_tag(request, tag):
         tag = Tag.objects.get_by_title(tag)
     except Tag.DoesNotExist:
         raise Http404()
-    
+
     questions = Question.objects.list_tag(tag)
 
     pagination = helpers.paginate(questions, request, key='question')
     return render(request, 'questions_list.html',
-            {
-                'questions': pagination,
-                'title': u'Тег ' + tag.title,
-            })
+                  {
+                      'questions': pagination,
+                      'title': u'Тег ' + tag.title,
+                  })
 
 
 # single question
@@ -70,9 +71,9 @@ def question(request, id):
         answer_form = AnswerForm()
 
     return render(request, 'question.html', {
-                'question': q,
-                'answer_form': answer_form,
-            })
+        'question': q,
+        'answer_form': answer_form,
+    })
 
 
 # logout
@@ -99,8 +100,8 @@ def form_login(request):
         form = LoginForm()
 
     return render(request, 'form_login.html', {
-            'form': form,
-        })
+        'form': form,
+    })
 
 
 # register form
@@ -118,8 +119,8 @@ def form_signup(request):
         form = SignupForm()
 
     return render(request, 'form_signup.html', {
-            'form': form,
-        })
+        'form': form,
+    })
 
 
 # profile edit form
@@ -137,9 +138,9 @@ def form_profile_edit(request):
         form = ProfileEditForm(u)
 
     return render(request, 'form_profile_edit.html', {
-            'form': form,
-            'u': request.user,
-        })
+        'form': form,
+        'u': request.user,
+    })
 
 
 # new question form
@@ -149,13 +150,15 @@ def form_question_new(request):
         form = QuestionForm(request.POST)
         if form.is_valid():
             q = form.save(request.user)
-            return HttpResponseRedirect(reverse('question', kwargs={'id': q.id}))
+            return HttpResponseRedirect(
+                reverse('question', kwargs={'id': q.id})
+            )
     else:
         form = QuestionForm()
 
     return render(request, 'form_question_new.html', {
         'form': form,
-        })
+    })
 
 
 # ajax question like
@@ -170,11 +173,14 @@ def ajax_question_like(request, id):
         q = Question.objects.get(pk=id)
         return helpers.HttpResponseAjax(likes=q.likes, question_id=q.id)
     except Question.DoesNotExist:
-        return helpers.HttpResponseAjaxError(code=u'no_question', message=u'Такого вопроса нет')
+        return helpers.HttpResponseAjaxError(code=u'no_question',
+                                             message=u'Такого вопроса нет')
     except QuestionLike.AlreadyLike as e1:
-        return helpers.HttpResponseAjaxError(code=u'already_like', message=e1.message)
+        return helpers.HttpResponseAjaxError(code=u'already_like',
+                                             message=e1.message)
     except QuestionLike.OwnLike as e2:
-        return helpers.HttpResponseAjaxError(code=u'own_like', message=e2.message)
+        return helpers.HttpResponseAjaxError(code=u'own_like',
+                                             message=e2.message)
 
 
 # ajax answer like
@@ -190,11 +196,14 @@ def ajax_answer_like(request, id):
         ans = Answer.objects.get(pk=id)
         return helpers.HttpResponseAjax(likes=ans.likes, answer_id=ans.id)
     except Answer.DoesNotExist:
-        return helpers.HttpResponseAjaxError(code=u'no_answer', message=u'Такого ответа нет')
+        return helpers.HttpResponseAjaxError(code=u'no_answer',
+                                             message=u'Такого ответа нет')
     except AnswerLike.AlreadyLike as e1:
-        return helpers.HttpResponseAjaxError(code=u'already_like', message=e1.message)
+        return helpers.HttpResponseAjaxError(code=u'already_like',
+                                             message=e1.message)
     except AnswerLike.OwnLike as e2:
-        return helpers.HttpResponseAjaxError(code=u'own_like', message=e2.message)
+        return helpers.HttpResponseAjaxError(code=u'own_like',
+                                             message=e2.message)
 
 
 # ajax answer correct
@@ -206,6 +215,7 @@ def ajax_answer_correct(request, id):
         ans.set_correct(request.user)
         return helpers.HttpResponseAjax(answer_id=ans.id)
     except Answer.DoesNotExist:
-        return helpers.HttpResponseAjaxError(code=u'no_answer', message=u'Такого ответа нет')
+        return helpers.HttpResponseAjaxError(code=u'no_answer',
+                                             message=u'Такого ответа нет')
     except Exception as e:
         return helpers.HttpResponseAjaxError(code=u'error', message=e.message)

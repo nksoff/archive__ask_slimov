@@ -1,11 +1,13 @@
 from django.http import HttpResponse
+import urllib2
 import json
+
 
 # pagination
 def paginate(objects, request, key=''):
     from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-    key = key + '_page'
+    key += '_page'
 
     page = request.GET.get(key)
     p = Paginator(objects, 8)
@@ -29,25 +31,24 @@ class HttpResponseAjax(HttpResponse):
     def __init__(self, status='ok', **kwargs):
         kwargs['status'] = status
         super(HttpResponseAjax, self).__init__(
-                content = json.dumps(kwargs),
-                content_type = 'application/json',
-                )
+            content=json.dumps(kwargs),
+            content_type='application/json',
+        )
 
 
 # response ajax with error
 class HttpResponseAjaxError(HttpResponseAjax):
     def __init__(self, code, message):
         super(HttpResponseAjaxError, self).__init__(
-                status = 'error', code = code, message = message
-                )
+            status='error', code=code, message=message
+        )
 
 
 # send comet messages
-import urllib2
-import json
+
 def comet_send_message(channel, text):
     url = 'http://nginx:8001/comet-publish/?id=' + channel
-    body = json.dumps({'messages': [ text ]})
+    body = json.dumps({'messages': [text]})
     request = urllib2.Request(url, body, {})
     response = urllib2.urlopen(request)
     return response

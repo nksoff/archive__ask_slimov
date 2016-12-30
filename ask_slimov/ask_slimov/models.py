@@ -13,6 +13,7 @@ from django.core.cache import cache
 
 from random import choice
 
+
 # user profile
 class Profile(models.Model):
     user = models.OneToOneField(User)
@@ -21,6 +22,7 @@ class Profile(models.Model):
 
     def __unicode__(self):
         return "[" + str(self.user.id) + "] " + self.user.username
+
 
 #
 # tags manager
@@ -61,13 +63,13 @@ class Tag(models.Model):
     RED = 'danger'
     LBLUE = 'info'
     COLORS = (
-            ('GR', GREEN),
-            ('DB', DBLUE),
-            ('B', BLACK),
-            ('RE', RED),
-            ('BL', LBLUE)
+        ('GR', GREEN),
+        ('DB', DBLUE),
+        ('B', BLACK),
+        ('RE', RED),
+        ('BL', LBLUE)
     )
-    
+
     title = models.CharField(max_length=30)
     color = models.CharField(max_length=2, choices=COLORS, default=BLACK)
 
@@ -134,14 +136,16 @@ class QuestionManager(models.Manager):
         return self.filter(tags=tag)
 
     # single question
-    def get_single(self, id):
+    def get_single(self, _id):
         res = self.get_queryset()
-        return res.with_answers().get(pk=id)
+        return res.with_answers().get(pk=_id)
 
     # best questions
     def get_best(self):
         week_ago = timezone.now() + datetime.timedelta(-7)
-        return self.get_queryset().order_by_popularity().with_date_greater(week_ago)
+        return self.get_queryset()\
+            .order_by_popularity()\
+            .with_date_greater(week_ago)
 
 
 #
@@ -164,7 +168,7 @@ class Question(models.Model):
     def get_correct_answer(self):
         try:
             ans = Answer.objects.get(question=self, correct=True)
-        except:
+        except Answer.DoesNotExist:
             ans = None
         return ans
 
@@ -194,15 +198,15 @@ class QuestionLikeManager(models.Manager):
 
         try:
             obj = self.get(
-                    author=author,
-                    question=question
-                    )
+                author=author,
+                question=question
+            )
         except QuestionLike.DoesNotExist:
             obj = self.create(
-                    author=author,
-                    question=question,
-                    value=value
-                    )
+                author=author,
+                question=question,
+                value=value
+            )
             question.likes = self.sum_for_question(question)
             question.save()
         else:
@@ -211,10 +215,10 @@ class QuestionLikeManager(models.Manager):
     # add like if not exists
     def add_or_update(self, author, question, value):
         obj, new = self.update_or_create(
-                author=author,
-                question=question,
-                defaults={'value': value}
-                )
+            author=author,
+            question=question,
+            defaults={'value': value}
+        )
 
         question.likes = self.sum_for_question(question)
         question.save()
@@ -228,12 +232,14 @@ class QuestionLike(models.Model):
     # like for own question is not allowed
     class OwnLike(Exception):
         def __init__(self):
-            super(QuestionLike.OwnLike, self).__init__(u'Вы не можете голосовать за свой вопрос')
+            super(QuestionLike.OwnLike, self)\
+                .__init__(u'Вы не можете голосовать за свой вопрос')
 
     # already liked
     class AlreadyLike(Exception):
         def __init__(self):
-            super(QuestionLike.AlreadyLike, self).__init__(u'Вы уже голосовали за этот вопрос')
+            super(QuestionLike.AlreadyLike, self)\
+                .__init__(u'Вы уже голосовали за этот вопрос')
 
     UP = 1
     DOWN = -1
@@ -251,7 +257,7 @@ class QuestionLike(models.Model):
             s += "<3"
         else:
             s += "<!!3"
-        
+
         s += " q" + str(self.question_id)
         return s
 
@@ -288,22 +294,26 @@ class AnswerManager(models.Manager):
 
     # create
     def create(self, **kwargs):
-        ans = super(AnswerManager, self).create(**kwargs);
-        
+        ans = super(AnswerManager, self).create(**kwargs)
+
         text = ans.text[:100]
         if len(ans.text) > 100:
             text += '...'
 
         helpers.comet_send_message(
-                helpers.comet_channel_id_question(ans.question),
-                u'Новый ответ (' + ans.author.last_name + ' ' + ans.author.first_name + '): ' + text 
-                )
+            helpers.comet_channel_id_question(ans.question),
+            u'Новый ответ (' + ans.author.last_name + ' ' +
+            ans.author.first_name + '): ' + text
+        )
         return ans
 
     # best answers
     def get_best(self):
         week_ago = timezone.now() + datetime.timedelta(-7)
-        return self.get_queryset().order_by_popularity().with_date_greater(week_ago)
+        return self.get_queryset()\
+            .order_by_popularity()\
+            .with_date_greater(week_ago)
+
 
 #
 # answer
@@ -321,7 +331,7 @@ class Answer(models.Model):
     # makes this answer correct
     def set_correct(self, user=None):
         q = self.question
-        
+
         if user is not None and q.author.id != user.id:
             raise Exception(u'Вы не являетесь автором этого вопроса')
 
@@ -364,15 +374,15 @@ class AnswerLikeManager(models.Manager):
 
         try:
             obj = self.get(
-                    author=author,
-                    answer=answer
-                    )
+                author=author,
+                answer=answer
+            )
         except AnswerLike.DoesNotExist:
             obj = self.create(
-                    author=author,
-                    answer=answer,
-                    value=value
-                    )
+                author=author,
+                answer=answer,
+                value=value
+            )
             answer.likes = self.sum_for_answer(answer)
             answer.save()
         else:
@@ -381,10 +391,10 @@ class AnswerLikeManager(models.Manager):
     # adds a like if not exists
     def add_or_update(self, author, answer, value):
         obj, new = self.update_or_create(
-                author=author,
-                answer=answer,
-                defaults={'value': value}
-                )
+            author=author,
+            answer=answer,
+            defaults={'value': value}
+        )
 
         answer.likes = self.sum_for_answer(answer)
         answer.save()
@@ -398,12 +408,14 @@ class AnswerLike(models.Model):
     # like for own answer is not allowed
     class OwnLike(Exception):
         def __init__(self):
-            super(AnswerLike.OwnLike, self).__init__(u'Вы не можете голосовать за свой ответ')
+            super(AnswerLike.OwnLike, self)\
+                .__init__(u'Вы не можете голосовать за свой ответ')
 
     # already liked
     class AlreadyLike(Exception):
         def __init__(self):
-            super(AnswerLike.AlreadyLike, self).__init__(u'Вы уже голосовали за этот ответ')
+            super(AnswerLike.AlreadyLike, self)\
+                .__init__(u'Вы уже голосовали за этот ответ')
 
     UP = 1
     DOWN = -1
@@ -421,14 +433,13 @@ class AnswerLike(models.Model):
             s += "<3"
         else:
             s += "<!!3"
-        
+
         s += " a" + str(self.answer_id)
         return s
 
 
 # caching
 class ProjectCache:
-
     #
     # popular tags
     #
@@ -436,14 +447,14 @@ class ProjectCache:
 
     # get
     @classmethod
-    def get_popular_tags(self):
+    def get_popular_tags(cls):
         return cache.get(ProjectCache.POPULAR_TAGS, [])
 
     # update
     @classmethod
-    def update_popular_tags(self):
+    def update_popular_tags(cls):
         popular = Tag.objects.count_popular()
-        cache.set(ProjectCache.POPULAR_TAGS, popular, 60*60*24)
+        cache.set(ProjectCache.POPULAR_TAGS, popular, 60 * 60 * 24)
 
     #
     # best users
@@ -452,12 +463,12 @@ class ProjectCache:
 
     # get
     @classmethod
-    def get_best_users(self):
+    def get_best_users(cls):
         return cache.get(ProjectCache.BEST_USERS, [])
 
     # update
     @classmethod
-    def update_best_users(self):
+    def update_best_users(cls):
         best_answers = Answer.objects.get_best()
         best_questions = Question.objects.get_best()
 
@@ -472,4 +483,4 @@ class ProjectCache:
 
         users = User.objects.filter(pk__in=users[:20])
 
-        cache.set(ProjectCache.BEST_USERS, users, 60*60*24)
+        cache.set(ProjectCache.BEST_USERS, users, 60 * 60 * 24)
