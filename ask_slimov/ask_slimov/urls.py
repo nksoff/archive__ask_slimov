@@ -5,9 +5,11 @@ from django.conf.urls.static import static
 from ask_slimov import views, settings, urls_ajax
 
 urlpatterns = [
-                  url(r'^$', views.questions_new, name='index'),
-                  url(r'^hot/?$', views.questions_hot, name='hot'),
-                  url(r'^tag/(?P<tag>.+)/?$', views.questions_tag, name='tag'),
+                  url(r'^$', views.QuestionsNew.as_view(), name='index'),
+                  url(r'^hot/?$', views.QuestionsHot.as_view(), name='hot'),
+                  url(r'^tag/(?P<tag>.+)/?$',
+                      views.QuestionsTag.as_view(),
+                      name='tag'),
                   url(r'^question/(?P<id>\d+)/?$',
                       views.question,
                       name='question'),

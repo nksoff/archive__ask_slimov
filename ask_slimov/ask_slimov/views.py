@@ -4,54 +4,58 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from django.forms.models import model_to_dict
 from django.core.urlresolvers import reverse
+from django.views import View
 from django.views.decorators.http import require_POST
 
 from ask_slimov import helpers
 from ask_slimov.models import Question, Answer, QuestionLike, AnswerLike, Tag
-from ask_slimov.forms import LoginForm, SignupForm,\
+from ask_slimov.forms import LoginForm, SignupForm, \
     ProfileEditForm, AnswerForm, QuestionForm
 from ask_slimov.decorators import need_login, need_login_ajax
 
 
 # new questions
-def questions_new(request):
-    questions = Question.objects.list_new()
+class QuestionsNew(View):
+    def get(self, request):
+        questions = Question.objects.list_new()
 
-    pagination = helpers.paginate(questions, request, key='question')
-    return render(request, 'questions_list.html',
-                  {
-                      'questions': pagination,
-                      'title': 'Новые вопросы', 'key': 'new',
-                  })
+        pagination = helpers.paginate(questions, request, key='question')
+        return render(request, 'questions_list.html',
+                      {
+                          'questions': pagination,
+                          'title': 'Новые вопросы', 'key': 'new',
+                      })
 
 
 # hot questions
-def questions_hot(request):
-    questions = Question.objects.list_hot()
+class QuestionsHot(View):
+    def get(self, request):
+        questions = Question.objects.list_hot()
 
-    pagination = helpers.paginate(questions, request, key='question')
-    return render(request, 'questions_list.html',
-                  {
-                      'questions': pagination,
-                      'title': 'Лучшие вопросы', 'key': 'hot',
-                  })
+        pagination = helpers.paginate(questions, request, key='question')
+        return render(request, 'questions_list.html',
+                      {
+                          'questions': pagination,
+                          'title': 'Лучшие вопросы', 'key': 'hot',
+                      })
 
 
-# questiong by tag
-def questions_tag(request, tag):
-    try:
-        tag = Tag.objects.get_by_title(tag)
-    except Tag.DoesNotExist:
-        raise Http404()
+# questions by tag
+class QuestionsTag(View):
+    def get(self, request, tag):
+        try:
+            tag = Tag.objects.get_by_title(tag)
+        except Tag.DoesNotExist:
+            raise Http404()
 
-    questions = Question.objects.list_tag(tag)
+        questions = Question.objects.list_tag(tag)
 
-    pagination = helpers.paginate(questions, request, key='question')
-    return render(request, 'questions_list.html',
-                  {
-                      'questions': pagination,
-                      'title': u'Тег ' + tag.title,
-                  })
+        pagination = helpers.paginate(questions, request, key='question')
+        return render(request, 'questions_list.html',
+                      {
+                          'questions': pagination,
+                          'title': u'Тег ' + tag.title,
+                      })
 
 
 # single question
