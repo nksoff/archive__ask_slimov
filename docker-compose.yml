@@ -33,9 +33,9 @@ services:
       - ./static:/static
     command: "/usr/local/nginx/sbin/nginx -c /etc/nginx/nginx.conf"
     ports:
-      - 8001:8001
+      - 3000:3000
     expose:
-      - 8001
+      - 3000
     restart: always
     links:
       - web
