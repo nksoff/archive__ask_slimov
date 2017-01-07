@@ -1,0 +1,31 @@
+{% for answer in answers %}
+    <div id="answer_{{ answer.id }}"
+         class="ask-answer ask-answer-{% if forloop.counter|divisibleby:2 %}white{% else %}gray{% endif %}">
+        <div class="ask-answer-info">
+            <div class="ask-user-avatar-container">
+                <img src="{{ answer.author.profile.avatar.url }}" class="user-avatar"
+                     title="{{ answer.author.last_name }} {{ answer.author.first_name }}"/>
+                <div class="small">{{ answer.author.last_name }} {{ answer.author.first_name }}</div>
+            </div>
+            <div class="ask-answer-data">
+                <p class="ask-answer-text">{{ answer.text }}</p>
+            </div>
+        </div>
+        <div class="ask-answer-options">
+            <div class="ask-answer-vote">
+                <a class="btn btn-xs btn-danger ask-answer-vote-down"
+                   {% if not request.user.is_authenticated %}disabled="disabled"{% endif %}
+                   data-answer-like-down="{{ answer.id }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                <span class="ask-answer-vote-count" data-answer-like-count="{{ answer.id }}">{{ answer.likes }}</span>
+                <a class="btn btn-xs btn-success ask-answer-vote-up"
+                   {% if not request.user.is_authenticated %}disabled="disabled"{% endif %}
+                   data-answer-like-up="{{ answer.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+            </div>
+            <div class="ask-answer-correct">
+                <a class="btn btn-large {% if answer.correct %}ask-answer-button-correct{% else %}ask-answer-button-incorrect{% endif %}"
+                   {% if question.author.id != request.user.id %}disabled="disabled"{% endif %}
+                   data-answer-correct="{{ answer.id }}"><span class="glyphicon glyphicon-ok"></span> Правильный</a>
+            </div>
+        </div>
+    </div>
+{% endfor %}

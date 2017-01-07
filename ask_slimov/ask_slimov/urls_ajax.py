@@ -12,4 +12,7 @@ urlpatterns = [
     url(r'answer/correct/(?P<id>\d+)/?$',
         views.ajax_answer_correct,
         name='ajax_answer_correct'),
+    url(r'question/answers/(?P<id>\d+)/(?P<page>\d+)/?$',
+        views.ajax_question_answers,
+        name='ajax_question_answers'),
 ]

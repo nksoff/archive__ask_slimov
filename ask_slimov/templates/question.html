@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
-{%block title %}{{ question.title }}{% endblock %}
-{%block page_title %}{% endblock %}
+{% block title %}{{ question.title }}{% endblock %}
+{% block page_title %}{% endblock %}
 
-{%block content %}
+{% block content %}
     <div class="ask-question ask-question-noborder">
         <div class="ask-question-info">
             <div class="ask-user-avatar-container">
-                <img src="{{ question.author.profile.avatar.url }}" class="user-avatar" title="{{ question.author.last_name }} {{ question.author.first_name }}" />
+                <img src="{{ question.author.profile.avatar.url }}" class="user-avatar"
+                     title="{{ question.author.last_name }} {{ question.author.first_name }}"/>
                 <div class="small">{{ question.author.last_name }} {{ question.author.first_name }}</div>
             </div>
             <div class="ask-question-data">
@@ -15,66 +16,59 @@
         </div>
         <div class="ask-question-options">
             <div class="ask-question-vote">
-                <a class="btn btn-xs btn-danger ask-question-vote-down" {%if not request.user.is_authenticated %}disabled="disabled"{% endif %} data-question-like-down="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                <span class="ask-question-vote-count" data-question-like-count="{{ question.id }}">{{ question.likes }}</span>
-                <a class="btn btn-xs btn-success ask-question-vote-up" {%if not request.user.is_authenticated %}disabled="disabled"{% endif %} data-question-like-up="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                <a class="btn btn-xs btn-danger ask-question-vote-down"
+                   {% if not request.user.is_authenticated %}disabled="disabled"{% endif %}
+                   data-question-like-down="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+                <span class="ask-question-vote-count"
+                      data-question-like-count="{{ question.id }}">{{ question.likes }}</span>
+                <a class="btn btn-xs btn-success ask-question-vote-up"
+                   {% if not request.user.is_authenticated %}disabled="disabled"{% endif %}
+                   data-question-like-up="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
             </div>
             <div class="ask-tags ask-question-tags">
                 {% for tag in question.tags.all %}
-                <a href="{{ tag.get_url }}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
+                    <a href="{{ tag.get_url }}"
+                       class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
                 {% endfor %}
             </div>
         </div>
-        <hr />
+        <hr/>
         <div class="ask-answers">
-            {% for answer in question.answer_set.all %}
-            <div id="answer_{{ answer.id }}" class="ask-answer ask-answer-{% if forloop.counter|divisibleby:2 %}white{% else %}gray{% endif %}">
-                <div class="ask-answer-info">
-                    <div class="ask-user-avatar-container">
-                        <img src="{{ answer.author.profile.avatar.url }}" class="user-avatar" title="{{ answer.author.last_name }} {{ answer.author.first_name }}" />
-                        <div class="small">{{ answer.author.last_name }} {{ answer.author.first_name }}</div>
-                    </div>
-                    <div class="ask-answer-data">
-                        <p class="ask-answer-text">{{ answer.text }}</p>
-                    </div>
-                </div>
-                <div class="ask-answer-options">
-                    <div class="ask-answer-vote">
-                        <a class="btn btn-xs btn-danger ask-answer-vote-down" {%if not request.user.is_authenticated %}disabled="disabled"{% endif %} data-answer-like-down="{{ answer.id }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                        <span class="ask-answer-vote-count" data-answer-like-count="{{ answer.id }}">{{ answer.likes }}</span>
-                        <a class="btn btn-xs btn-success ask-answer-vote-up" {%if not request.user.is_authenticated %}disabled="disabled"{% endif %} data-answer-like-up="{{ answer.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
-                    </div>
-                    <div class="ask-answer-correct">
-                        <a class="btn btn-large {% if answer.correct %}ask-answer-button-correct{% else %}ask-answer-button-incorrect{% endif %}" {% if question.author.id != request.user.id %}disabled="disabled"{% endif %} data-answer-correct="{{ answer.id}}"><span class="glyphicon glyphicon-ok"></span> Правильный</a>
-                    </div>
-                </div>
+            <div class="ask-answers-container">
             </div>
-            {% endfor %}
+            <div class="ask-answers-loading">
+            </div>
+            <div class="ask-answers-more" style="display: none" data-page="1">
+                Загрузить ещё ответы...
+            </div>
         </div>
-        {%if request.user.is_authenticated %}
-        <hr />
-        <div class="ask-answer-form">
-            <div class="ask-answer-form-title">Ваш ответ</div>
-            <form class="form-horizontal" method="post" action="">
-                {% csrf_token %}
-                <div class="form-group">
-                    <div class="col-sm-8">
-                        {{ answer_form.text }}
+        {% if request.user.is_authenticated %}
+            <hr/>
+            <div class="ask-answer-form">
+                <div class="ask-answer-form-title">Ваш ответ</div>
+                <form class="form-horizontal" method="post" action="">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-sm-8">
+                            {{ answer_form.text }}
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-4">
-                        <button type="submit" class="btn btn-primary">Ответить</button>
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <button type="submit" class="btn btn-primary">Ответить</button>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
+                </form>
+            </div>
         {% endif %}
     </div>
 
     <script>
-    $(document).ready(function() {
-        App.comet('q{{ question.id }}');
-    });
+        $(function () {
+            App.comet('q{{ question.id }}');
+            $('.ask-answers-more').click(function() {
+                App.get_answers({{ question.id }}, $(this).data('page'));
+            }).click();
+        });
     </script>
 {% endblock %}

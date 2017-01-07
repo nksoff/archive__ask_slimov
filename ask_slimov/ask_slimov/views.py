@@ -6,6 +6,7 @@ from django.forms.models import model_to_dict
 from django.core.urlresolvers import reverse
 from django.views import View
 from django.views.decorators.http import require_POST
+from django.template.loader import render_to_string
 
 from ask_slimov import helpers
 from ask_slimov.models import Question, Answer, QuestionLike, AnswerLike, Tag
@@ -134,7 +135,7 @@ def form_profile_edit(request):
         form = ProfileEditForm(request.POST, request.FILES)
         if form.is_valid():
             form.save(request.user)
-            return HttpResponseRedirect('')
+            return HttpResponseRedirect(reverse('profile_edit'))
     else:
         u = model_to_dict(request.user)
         up = request.user.profile
@@ -223,3 +224,30 @@ def ajax_answer_correct(request, id):
                                              message=u'Такого ответа нет')
     except Exception as e:
         return helpers.HttpResponseAjaxError(code=u'error', message=e.message)
+
+
+@need_login_ajax
+def ajax_question_answers(request, id, page):
+    try:
+        answers_per_page = 20
+        q = Question.objects.get(pk=int(id))
+        limit_from = (int(page) - 1) * answers_per_page
+        limit_to = limit_from + answers_per_page
+
+        query_set = Answer.objects.filter(question=q)
+        answers = render_to_string(
+            'answers.html',
+            request=request,
+            context={
+                'answers': query_set[limit_from:limit_to].all(),
+                'question': q
+            })
+        total_answers = len(query_set)
+        return helpers.HttpResponseAjax(page=page,
+                                        limit_from=limit_from,
+                                        limit_to=limit_to,
+                                        total=total_answers,
+                                        answers=answers)
+    except Question.DoesNotExist:
+        return helpers.HttpResponseAjaxError(code=u'no_question',
+                                             message=u'Такого вопроса нет')
