@@ -128,6 +128,10 @@ var App = {};
 
                     $('.ask-answers-container').append(data.answers);
                     $('.ask-answers-more').data('page', parseInt(data.page) + 1);
+
+                    if(data.limit_to >= data.total) {
+                        $('.ask-answers-more').hide();
+                    }
                 }.bind(this)
             ).error(function () {
                 App.on_error('Не удалось загрузить ответы');
