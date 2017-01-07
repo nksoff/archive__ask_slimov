@@ -33,9 +33,11 @@
             </div>
         </div>
         <hr/>
-        <div class="ask-answers-add">
-            Добавить комментарий
-        </div>
+        {% if request.user.is_authenticated %}
+            <div class="ask-answers-add">
+                Добавить комментарий
+            </div>
+        {% endif %}
         <div class="ask-answers">
             <div class="ask-answers-container">
             </div>
