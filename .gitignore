@@ -3,6 +3,7 @@ ask_slimov/uploads/*
 .data
 *.pyc
 *.log
+/static/
 
 # Linux / Unix
 !.gitkeep

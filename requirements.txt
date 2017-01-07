@@ -2,3 +2,4 @@ Django
 faker
 mysqlclient
 Pillow
+gunicorn

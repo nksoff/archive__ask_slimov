@@ -15,7 +15,7 @@ services:
     build: .
     depends_on:
       - db
-    command: bash -c 'python ask_slimov/manage.py createcachetable && python ask_slimov/manage.py makemigrations && python ask_slimov/manage.py migrate && python ask_slimov/manage.py runserver 0.0.0.0:8000'
+    command: bash -c 'python ask_slimov/manage.py collectstatic --noinput && python ask_slimov/manage.py createcachetable && python ask_slimov/manage.py makemigrations && python ask_slimov/manage.py migrate && /usr/local/bin/gunicorn ask_slimov.wsgi:application -w 4 -b :8000 --chdir /code/ask_slimov'
     volumes:
       - .:/code
     ports:
@@ -30,6 +30,7 @@ services:
     volumes:
       - ./docker/nginx:/etc/nginx
       - ./ask_slimov:/code
+      - ./static:/static
     command: "/usr/local/nginx/sbin/nginx -c /etc/nginx/nginx.conf"
     ports:
       - 8001:8001
