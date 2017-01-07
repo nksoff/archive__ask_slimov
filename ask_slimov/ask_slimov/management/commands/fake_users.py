@@ -41,7 +41,7 @@ class Command(BaseCommand):
 
             up = Profile()
             up.user = u
-            up.info = '%s [%s]' % (fakeru.company(), fakeru.catch_phrase())
+            up.info = '%s (%s)' % (fakeru.company(), fakeru.company())
 
             image_url = 'http://api.adorable.io/avatars/100/%s.png'\
                         % u.username

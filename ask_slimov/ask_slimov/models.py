@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.contrib import admin
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -70,8 +71,12 @@ class Tag(models.Model):
         ('BL', LBLUE)
     )
 
-    title = models.CharField(max_length=30)
-    color = models.CharField(max_length=2, choices=COLORS, default=BLACK)
+    title = models.CharField(max_length=30,
+                             verbose_name='Название')
+    color = models.CharField(max_length=2,
+                             choices=COLORS,
+                             default=BLACK,
+                             verbose_name='Цвет')
 
     objects = TagManager()
 
@@ -80,6 +85,22 @@ class Tag(models.Model):
 
     def __unicode__(self):
         return "[" + str(self.id) + "] " + self.title
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('title', 'color',)
+    search_fields = ('title',)
+
+    def get_ordering(self, request):
+        return ['title']
+
+    def get_list_filter(self, request):
+        return ['color']
 
 
 #
@@ -143,8 +164,8 @@ class QuestionManager(models.Manager):
     # best questions
     def get_best(self):
         week_ago = timezone.now() + datetime.timedelta(-7)
-        return self.get_queryset()\
-            .order_by_popularity()\
+        return self.get_queryset() \
+            .order_by_popularity() \
             .with_date_greater(week_ago)
 
 
@@ -152,12 +173,17 @@ class QuestionManager(models.Manager):
 # question
 #
 class Question(models.Model):
-    title = models.CharField(max_length=100)
-    text = models.TextField()
-    author = models.ForeignKey(User)
-    date = models.DateTimeField(default=timezone.now)
-    tags = models.ManyToManyField(Tag)
-    likes = models.IntegerField(default=0)
+    title = models.CharField(max_length=100,
+                             verbose_name='Заголовок')
+    text = models.TextField(verbose_name='Текст')
+    author = models.ForeignKey(User,
+                               verbose_name='Автор')
+    date = models.DateTimeField(default=timezone.now,
+                                verbose_name='Дата')
+    tags = models.ManyToManyField(Tag,
+                                  verbose_name='Теги')
+    likes = models.IntegerField(default=0,
+                                verbose_name='Кол-во лайков')
 
     objects = QuestionManager()
 
@@ -173,10 +199,28 @@ class Question(models.Model):
         return ans
 
     def __unicode__(self):
-        return "[" + str(self.id) + "] " + self.title
+        text = self.title[:100]
+        if len(self.title) > 100:
+            text += '...'
+        return "[" + str(self.id) + "] " + text
 
     class Meta:
         ordering = ['-date']
+        verbose_name = 'Вопрос'
+        verbose_name_plural = 'Вопросы'
+
+
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'date',)
+    search_fields = ('title', 'text',)
+    readonly_fields = ('likes',)
+
+    def get_ordering(self, request):
+        return ['-date', 'title']
+
+    def get_list_filter(self, request):
+        return ['author', 'tags']
 
 
 #
@@ -232,21 +276,24 @@ class QuestionLike(models.Model):
     # like for own question is not allowed
     class OwnLike(Exception):
         def __init__(self):
-            super(QuestionLike.OwnLike, self)\
+            super(QuestionLike.OwnLike, self) \
                 .__init__(u'Вы не можете голосовать за свой вопрос')
 
     # already liked
     class AlreadyLike(Exception):
         def __init__(self):
-            super(QuestionLike.AlreadyLike, self)\
+            super(QuestionLike.AlreadyLike, self) \
                 .__init__(u'Вы уже голосовали за этот вопрос')
 
     UP = 1
     DOWN = -1
 
-    question = models.ForeignKey(Question)
-    author = models.ForeignKey(User)
-    value = models.SmallIntegerField(default=1)
+    question = models.ForeignKey(Question,
+                                 verbose_name='Вопрос')
+    author = models.ForeignKey(User,
+                               verbose_name='Автор')
+    value = models.SmallIntegerField(default=1,
+                                     verbose_name='Лайк?')
 
     objects = QuestionLikeManager()
 
@@ -259,6 +306,25 @@ class QuestionLike(models.Model):
             s += "<!!3"
 
         s += " q" + str(self.question_id)
+        return s
+
+    class Meta:
+        verbose_name = 'Лайк вопроса'
+        verbose_name_plural = 'Лайки вопросов'
+
+
+@admin.register(QuestionLike)
+class QuestionLikeAdmin(admin.ModelAdmin):
+    list_display = ('question', 'author', 'val')
+    readonly_fields = ('question', 'author')
+
+    def val(self, obj):
+        s = ''
+        if int(obj.value) > 0:
+            s += "<3"
+        else:
+            s += "<!!3"
+
         return s
 
 
@@ -310,8 +376,8 @@ class AnswerManager(models.Manager):
     # best answers
     def get_best(self):
         week_ago = timezone.now() + datetime.timedelta(-7)
-        return self.get_queryset()\
-            .order_by_popularity()\
+        return self.get_queryset() \
+            .order_by_popularity() \
             .with_date_greater(week_ago)
 
 
@@ -319,12 +385,17 @@ class AnswerManager(models.Manager):
 # answer
 #
 class Answer(models.Model):
-    text = models.TextField()
-    question = models.ForeignKey(Question)
-    author = models.ForeignKey(User)
-    date = models.DateTimeField(default=timezone.now)
-    correct = models.BooleanField(default=False)
-    likes = models.IntegerField(default=0)
+    text = models.TextField(verbose_name='Ответ')
+    question = models.ForeignKey(Question,
+                                 verbose_name='Вопрос')
+    author = models.ForeignKey(User,
+                               verbose_name='Автор')
+    date = models.DateTimeField(default=timezone.now,
+                                verbose_name='Дата')
+    correct = models.BooleanField(default=False,
+                                  verbose_name='Правильный')
+    likes = models.IntegerField(default=0,
+                                verbose_name='Кол-во лайков')
 
     objects = AnswerManager()
 
@@ -349,10 +420,28 @@ class Answer(models.Model):
         self.save()
 
     def __unicode__(self):
-        return "[" + str(self.id) + "] " + self.text
+        text = self.text[:100]
+        if len(self.text) > 100:
+            text += '...'
+        return "[" + str(self.id) + "] " + text
 
     class Meta:
         ordering = ['-correct', '-date', '-likes']
+        verbose_name = 'Ответ'
+        verbose_name_plural = 'Ответы'
+
+
+@admin.register(Answer)
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ('text', 'question', 'author', 'date', 'correct')
+    search_fields = ('text',)
+    readonly_fields = ('likes',)
+
+    def get_ordering(self, request):
+        return ['-date']
+
+    def get_list_filter(self, request):
+        return ['author', 'correct']
 
 
 #
@@ -408,21 +497,24 @@ class AnswerLike(models.Model):
     # like for own answer is not allowed
     class OwnLike(Exception):
         def __init__(self):
-            super(AnswerLike.OwnLike, self)\
+            super(AnswerLike.OwnLike, self) \
                 .__init__(u'Вы не можете голосовать за свой ответ')
 
     # already liked
     class AlreadyLike(Exception):
         def __init__(self):
-            super(AnswerLike.AlreadyLike, self)\
+            super(AnswerLike.AlreadyLike, self) \
                 .__init__(u'Вы уже голосовали за этот ответ')
 
     UP = 1
     DOWN = -1
 
-    answer = models.ForeignKey(Answer)
-    author = models.ForeignKey(User)
-    value = models.SmallIntegerField(default=1)
+    answer = models.ForeignKey(Answer,
+                               verbose_name='Ответ')
+    author = models.ForeignKey(User,
+                               verbose_name='Автор')
+    value = models.SmallIntegerField(default=1,
+                                     verbose_name='Лайк?')
 
     objects = AnswerLikeManager()
 
@@ -435,6 +527,25 @@ class AnswerLike(models.Model):
             s += "<!!3"
 
         s += " a" + str(self.answer_id)
+        return s
+
+    class Meta:
+        verbose_name = 'Лайк ответа'
+        verbose_name_plural = 'Лайки ответов'
+
+
+@admin.register(AnswerLike)
+class AnswerLikeAdmin(admin.ModelAdmin):
+    list_display = ('answer', 'author', 'val')
+    readonly_fields = ('answer', 'author')
+
+    def val(self, obj):
+        s = ''
+        if int(obj.value) > 0:
+            s += "<3"
+        else:
+            s += "<!!3"
+
         return s
 
 
