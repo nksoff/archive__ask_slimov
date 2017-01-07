@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
-{%block title %}Войти{% endblock %}
-{%block page_title %}Войти{% endblock %}
+{% block title %}Войти{% endblock %}
+{% block page_title %}Войти{% endblock %}
 
-{%block content %}
+{% block content %}
     <div class="ask-login-form-error">
-        {%for e in form.non_field_errors %}
-        <div class="alert alert-danger" role="alert">
-            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            {{ e }}
-        </div>
+        {% for e in form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                {{ e }}
+            </div>
         {% endfor %}
     </div>
     <div class="ask-login-form">

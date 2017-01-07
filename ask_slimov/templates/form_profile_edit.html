@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
-{%block title %}Редактирование профиля{% endblock %}
-{%block page_title %}Редактирование профиля{% endblock %}
+{% block title %}Редактирование профиля{% endblock %}
+{% block page_title %}Редактирование профиля{% endblock %}
 
-{%block content %}
+{% block content %}
     {% for e in form.non_field_errors %}
         <div class="ask-signup-form-error">
             <div class="alert alert-danger" role="alert">
@@ -20,18 +20,18 @@
                     {{ u.username }}
                 </div>
             </div>
-            {%for field in form  %}
-            <div class="form-group{% if field.errors %} has-error{% endif %}">
-                <label for="{{ field.name }}" class="col-sm-3 control-label">{{ field.label }}</label>
-                <div class="col-sm-6">
-                    {% if field.name == 'avatar' %}
-                        <img src="{{ u.profile.avatar.url }}" class="" style="max-width: 100%" />
-                    {% endif %}
-                    {{ field }}
-                    {% if field.errors %} {% for e in field.errors %}{{ e }}{% endfor %}
-                    {% endif %}
+            {% for field in form %}
+                <div class="form-group{% if field.errors %} has-error{% endif %}">
+                    <label for="{{ field.name }}" class="col-sm-3 control-label">{{ field.label }}</label>
+                    <div class="col-sm-6">
+                        {% if field.name == 'avatar' %}
+                            <img src="{{ u.profile.avatar.url }}" class="" style="max-width: 100%"/>
+                        {% endif %}
+                        {{ field }}
+                        {% if field.errors %} {% for e in field.errors %}{{ e }}{% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
             {% endfor %}
             <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-6">

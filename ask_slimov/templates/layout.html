@@ -1,107 +1,110 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{%block title %}{% endblock %} - Ask Slimov</title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %} - Ask Slimov</title>
 
-        {% load staticfiles %}
-        <link href="{% static 'css/main.css' %}" rel="stylesheet">
-        <link href="{% static 'css/alertify.core.css' %}" rel="stylesheet">
-        <link href="{% static 'css/alertify.bootstrap.css' %}" rel="stylesheet">
-        <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
-        <script src="{% static 'js/bootstrap.min.js' %}"></script>
-        <script src="{% static 'js/alertify.min.js' %}"></script>
-        <script src="{% static 'js/common.js' %}"></script>
+    {% load staticfiles %}
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    <link href="{% static 'css/alertify.core.css' %}" rel="stylesheet">
+    <link href="{% static 'css/alertify.bootstrap.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/alertify.min.js' %}"></script>
+    <script src="{% static 'js/common.js' %}"></script>
 
-        {%block extrahead%}{% endblock %}
-    </head>
-    <body>
-        <div class="ask-header">
-            <nav class="navbar navbar-default navbar-fixed-top">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#ask-header-links" aria-expanded="false">
-                            <span class="sr-only">Открыть меню</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="{% url 'index' %}">Ask Slimov <sup><i>ß</i></sup></a>
-                    </div>
+    {% block extrahead %}{% endblock %}
+</head>
+<body>
+<div class="ask-header">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#ask-header-links" aria-expanded="false">
+                    <span class="sr-only">Открыть меню</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'index' %}">Ask Slimov <sup><i>ß</i></sup></a>
+            </div>
 
-                    <div class="collapse navbar-collapse" id="ask-header-links">
-                        <form class="navbar-form navbar-left ask-header-navbar-search" role="search">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Ваш вопрос">
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-default ask-header-navbar_search_button">Искать</button>
+            <div class="collapse navbar-collapse" id="ask-header-links">
+                <form class="navbar-form navbar-left ask-header-navbar-search" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Ваш вопрос">
+                        <span class="input-group-btn">
+                                    <button type="submit"
+                                            class="btn btn-default ask-header-navbar_search_button">Искать</button>
                                 </span>
-                            </div>
-                        </form>
-                        <ul class="nav navbar-nav navbar-right">
-                            {%if request.user.is_authenticated  %}
-                            <li>
-                                <a href="{% url 'ask' %}">
-                                    <span class="glyphicon glyphicon-plus" title="Задать вопрос"></span>
-                                </a>
-                            </li>
-                            <li class="ask-navbar_with-image">
-                                <a href="{% url 'profile_edit' %}">
-                                    <img src="{{ request.user.profile.avatar.url }}" class="ask-navbar-image" />
-                                    {{ request.user.last_name }} {{ request.user.first_name }}
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'logout' %}?continue={{ request.path }}">
-                                    <span class="glyphicon glyphicon-share-alt"></span>
-                                    Выйти
-                                </a>
-                            </li>
-                            {% else %}
-                            <li><a href="{% url 'login' %}">
-                                    <span class="glyphicon glyphicon-user"></span>
-                                    Войти
-                            </a></li>
-                            <li><a href="{% url 'signup' %}">
-                                    <span class="glyphicon glyphicon-plus-sign"></span>
-                                    Регистрация
-                            </a></li>
-                            {% endif %}
-                        </ul>
                     </div>
-                </div>
-            </nav>
-        </div>
-        <div class="ask-body">
-            <div class="ask-body-title">
-                {%block page_title %}{% endblock %}
-            </div>
-            <div class="ask-body-content col-xs-12 col-sm-8">
-                {%block content %}{% endblock %}
-            </div>
-            <div class="ask-body-right-column col-xs-12 col-sm-3">
-                <div class="ask-body-block">
-                    <div class="ask-body-block-title">Популярные теги</div>
-                    <div class="ask-tags">
-                        {% for tag in popular_tags %}
-                        <a href="{{ tag.get_url }}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="ask-body-block">
-                    <div class="ask-body-block-title">Лучшие участники</div>
-                    <ol class="ask-best-members">
-                        {% for u in best_users %}
-                        <li class="ask-best-members-person">
-                            <span class="ask-best-members-person-icon"></span>
-                            <span>{{ u.last_name }} {{ u.first_name }}</span>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if request.user.is_authenticated %}
+                        <li>
+                            <a href="{% url 'ask' %}">
+                                <span class="glyphicon glyphicon-plus" title="Задать вопрос"></span>
+                            </a>
                         </li>
-                        {% endfor %}
-                    </ol>
-                </div>
+                        <li class="ask-navbar_with-image">
+                            <a href="{% url 'profile_edit' %}">
+                                <img src="{{ request.user.profile.avatar.url }}" class="ask-navbar-image"/>
+                                {{ request.user.last_name }} {{ request.user.first_name }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'logout' %}?continue={{ request.path }}">
+                                <span class="glyphicon glyphicon-share-alt"></span>
+                                Выйти
+                            </a>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">
+                            <span class="glyphicon glyphicon-user"></span>
+                            Войти
+                        </a></li>
+                        <li><a href="{% url 'signup' %}">
+                            <span class="glyphicon glyphicon-plus-sign"></span>
+                            Регистрация
+                        </a></li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
-    </body>
+    </nav>
+</div>
+<div class="ask-body">
+    <div class="ask-body-title">
+        {% block page_title %}{% endblock %}
+    </div>
+    <div class="ask-body-content col-xs-12 col-sm-8">
+        {% block content %}{% endblock %}
+    </div>
+    <div class="ask-body-right-column col-xs-12 col-sm-3">
+        <div class="ask-body-block">
+            <div class="ask-body-block-title">Популярные теги</div>
+            <div class="ask-tags">
+                {% for tag in popular_tags %}
+                    <a href="{{ tag.get_url }}"
+                       class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="ask-body-block">
+            <div class="ask-body-block-title">Лучшие участники</div>
+            <ol class="ask-best-members">
+                {% for u in best_users %}
+                    <li class="ask-best-members-person">
+                        <span class="ask-best-members-person-icon"></span>
+                        <span>{{ u.last_name }} {{ u.first_name }}</span>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+</div>
+</body>
 </html>

@@ -55,12 +55,12 @@
             $('.ask-ask-form form').submit(function () {
                 var $form = $(this);
                 var errorFields = [];
-                $form.find('input[type=text][name], textarea[name]').each(function(i, el) {
-                    if($(el).val().toLowerCase().indexOf('php') !== -1) {
+                $form.find('input[type=text][name], textarea[name]').each(function (i, el) {
+                    if ($(el).val().toLowerCase().indexOf('php') !== -1) {
                         errorFields.push($(el).attr('name'));
                     }
                 });
-                if(errorFields.length > 0) {
+                if (errorFields.length > 0) {
                     App.on_error('Вопросы про PHP запрещены.');
                     return false;
                 }

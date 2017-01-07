@@ -1,45 +1,53 @@
 {% extends "layout.html" %}
-{%block title %}{{ title }}{% endblock %}
-{%block page_title %}
-{{ title }}
-{% if key == 'new' %}<a href="{% url 'hot' %}" class="small">Лучшие вопросы</a>{% endif %}
-{% if key == 'hot' %}<a href="{% url 'index' %}" class="small">Новые вопросы</a>{% endif %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}
+    {{ title }}
+    {% if key == 'new' %}<a href="{% url 'hot' %}" class="small">Лучшие вопросы</a>{% endif %}
+    {% if key == 'hot' %}<a href="{% url 'index' %}" class="small">Новые вопросы</a>{% endif %}
 {% endblock %}
 
-{%block content %}
-<div class="ask-questions">
-    {% for question in questions %}
-    <div class="ask-question ask-question-{% if forloop.counter|divisibleby:2 %}white{% else %}gray{% endif %}">
-        <div class="ask-question-info">
-            <div class="ask-user-avatar-container">
-                {% load static %}
-                <img src="{{ question.author.profile.avatar.url }}" class="user-avatar" alt="{{ question.author.last_name }} {{ question.author.first_name }}" />
-                <div class="small">{{ question.author.last_name }} {{ question.author.first_name }}</div>
+{% block content %}
+    <div class="ask-questions">
+        {% for question in questions %}
+            <div class="ask-question ask-question-{% if forloop.counter|divisibleby:2 %}white{% else %}gray{% endif %}">
+                <div class="ask-question-info">
+                    <div class="ask-user-avatar-container">
+                        {% load static %}
+                        <img src="{{ question.author.profile.avatar.url }}" class="user-avatar"
+                             alt="{{ question.author.last_name }} {{ question.author.first_name }}"/>
+                        <div class="small">{{ question.author.last_name }} {{ question.author.first_name }}</div>
+                    </div>
+                    <div class="ask-question-data">
+                        <div class="ask-question-title"><a href="{{ question.get_url }}">{{ question.title }}</a></div>
+                        <p class="ask-question-text">{{ question.text }}</p>
+                    </div>
+                </div>
+                <div class="ask-question-options">
+                    <div class="ask-question-vote">
+                        <a class="btn btn-xs btn-danger ask-question-vote-down"
+                           {% if not request.user.is_authenticated %}disabled="disabled"{% endif %}
+                           data-question-like-down="{{ question.id }}"><span
+                                class="glyphicon glyphicon-thumbs-down"></span></a>
+                        <span class="ask-question-vote-count"
+                              data-question-like-count="{{ question.id }}">{{ question.likes }}</span>
+                        <a class="btn btn-xs btn-success ask-question-vote-up"
+                           {% if not request.user.is_authenticated %}disabled="disabled"{% endif %}
+                           data-question-like-up="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                    </div>
+                    <div class="ask-question-answer-link">
+                        <a href="{{ question.get_url }}">Ответы ({{ question.answers }})</a>
+                    </div>
+                    <div class="ask-tags ask-question-tags">
+                        {% for tag in question.tags.all %}
+                            <a href="{{ tag.get_url }}"
+                               class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
-            <div class="ask-question-data">
-                <div class="ask-question-title"><a href="{{ question.get_url }}">{{ question.title }}</a></div>
-                <p class="ask-question-text">{{ question.text }}</p>
-            </div>
-        </div>
-        <div class="ask-question-options">
-            <div class="ask-question-vote">
-                <a class="btn btn-xs btn-danger ask-question-vote-down" {%if not request.user.is_authenticated %}disabled="disabled"{% endif %} data-question-like-down="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-down"></span></a>
-                <span class="ask-question-vote-count" data-question-like-count="{{ question.id }}">{{ question.likes }}</span>
-                <a class="btn btn-xs btn-success ask-question-vote-up" {%if not request.user.is_authenticated %}disabled="disabled"{% endif %} data-question-like-up="{{ question.id }}"><span class="glyphicon glyphicon-thumbs-up"></span></a>
-            </div>
-            <div class="ask-question-answer-link">
-                <a href="{{ question.get_url }}">Ответы ({{ question.answers }})</a>
-            </div>
-            <div class="ask-tags ask-question-tags">
-                {% for tag in question.tags.all %}
-                <a href="{{ tag.get_url }}" class="ask-tags-tag ask-tags-tag_color_{{ tag.get_color_display }}">{{ tag.title }}</a>
-                {% endfor %}
-            </div>
-        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 
-{%include 'paginator.html' with objects=questions %}
+    {% include 'paginator.html' with objects=questions %}
 
 {% endblock %}
