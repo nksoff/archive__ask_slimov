@@ -129,12 +129,31 @@ var App = {};
                     $('.ask-answers-container').append(data.answers);
                     $('.ask-answers-more').data('page', parseInt(data.page) + 1);
 
-                    if(data.limit_to >= data.total) {
+                    if (data.limit_to >= data.total) {
                         $('.ask-answers-more').hide();
                     }
                 }.bind(this)
             ).error(function () {
                 App.on_error('Не удалось загрузить ответы');
+            });
+        },
+
+        add_answer: function (question_id, text) {
+            $.ajax({
+                'url': '/ajax/question/answer/add/' + question_id + '/',
+                'type': 'POST',
+                'data': {
+                    'text': text
+                }
+            }).success(function (data) {
+                if (data.status == 'error') {
+                    App.on_error(data.message);
+                    return;
+                }
+
+                $('.ask-answers-container').prepend(data.answer);
+            }).error(function () {
+                App.on_error('Не удалось добавить ответ');
             });
         },
 

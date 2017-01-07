@@ -33,6 +33,9 @@
             </div>
         </div>
         <hr/>
+        <div class="ask-answers-add">
+            Добавить комментарий
+        </div>
         <div class="ask-answers">
             <div class="ask-answers-container">
             </div>
@@ -66,9 +69,26 @@
     <script>
         $(function () {
             App.comet('q{{ question.id }}');
-            $('.ask-answers-more').click(function() {
+            $('.ask-answers-more').click(function () {
                 App.get_answers({{ question.id }}, $(this).data('page'));
             }).click();
+
+            $('.ask-answers-add').click(function () {
+                alertify.prompt('Введите ваш комментарий', function (res, comment) {
+                    if (!res) {
+                        App.on_success('Вы отменили добавление комментария');
+                        return;
+                    }
+
+                    if ($.trim(comment).length == 0) {
+                        App.on_error('Пустой комментарий :-(');
+                        return;
+                    }
+
+                    App.add_answer({{ question.id }}, comment);
+                    App.on_success('Комментарий добавлен: ' + comment);
+                });
+            });
         });
     </script>
 {% endblock %}

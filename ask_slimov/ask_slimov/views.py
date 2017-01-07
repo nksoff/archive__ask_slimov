@@ -226,7 +226,6 @@ def ajax_answer_correct(request, id):
         return helpers.HttpResponseAjaxError(code=u'error', message=e.message)
 
 
-@need_login_ajax
 def ajax_question_answers(request, id, page):
     try:
         answers_per_page = 20
@@ -248,6 +247,26 @@ def ajax_question_answers(request, id, page):
                                         limit_to=limit_to,
                                         total=total_answers,
                                         answers=answers)
+    except Question.DoesNotExist:
+        return helpers.HttpResponseAjaxError(code=u'no_question',
+                                             message=u'Такого вопроса нет')
+
+
+@need_login_ajax
+def ajax_question_answer_add(request, id):
+    try:
+        q = Question.objects.get(pk=int(id))
+        ans = q.answer_set.create(text=request.POST.get('text'), author=request.user)
+
+        rendered_answer = render_to_string(
+            'answers.html',
+            request=request,
+            context={
+                'answers': [ans],
+                'question': q
+            })
+
+        return helpers.HttpResponseAjax(answer=rendered_answer)
     except Question.DoesNotExist:
         return helpers.HttpResponseAjaxError(code=u'no_question',
                                              message=u'Такого вопроса нет')

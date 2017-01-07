@@ -15,4 +15,7 @@ urlpatterns = [
     url(r'question/answers/(?P<id>\d+)/(?P<page>\d+)/?$',
         views.ajax_question_answers,
         name='ajax_question_answers'),
+    url(r'question/answer/add/(?P<id>\d+)/?$',
+        views.ajax_question_answer_add,
+        name='ajax_question_answer_add'),
 ]

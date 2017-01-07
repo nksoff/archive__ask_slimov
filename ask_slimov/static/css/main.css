@@ -7345,7 +7345,7 @@ fieldset[disabled] .ask-answer-button-correct.focus {
   margin: 0 auto;
 }
 
-.ask-answers-more {
+.ask-answers-more, .ask-answers-add {
   line-height: 40px;
   height: 40px;
   width: 100%;
@@ -7355,9 +7355,10 @@ fieldset[disabled] .ask-answer-button-correct.focus {
   font-weight: 400;
   color: #2B72D5;
   text-decoration: underline;
+  margin-bottom: 50px;
 }
 
-.ask-answers-more:hover {
+.ask-answers-more:hover, .ask-answers-add:hover {
   border: 1px dashed #2B72D5;
   color: #66afe9;
 }
